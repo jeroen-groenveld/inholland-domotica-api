@@ -3,17 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Web_API.Models;
 
 namespace Web_API.Controllers
 {
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
+        private DatabaseContext _db;
+
+        public ValuesController(DatabaseContext db)
+        {
+            this._db = db;
+        }
+
         // GET api/values
         [HttpGet]
-        public IEnumerable<string> Get()
+        public JsonResult Get()
         {
-            return new string[] { "value1", "value2" };
+            return Json(new string[] { "adsf" });
         }
 
         // GET api/values/5

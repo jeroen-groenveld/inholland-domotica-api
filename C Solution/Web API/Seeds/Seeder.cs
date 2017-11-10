@@ -6,16 +6,16 @@ namespace Web_API.Seeds
 {
     public abstract class Seeder
     {
-        protected DatabaseContext _context;
+        protected DatabaseContext _db;
 
-        public Seeder(DatabaseContext context)
+        public Seeder(DatabaseContext db)
         {
-            _context = context;
+            _db = db;
         }
 
-        public virtual async Task Run()
+        public async virtual Task Run()
         {
-
+            return;
         }
     }
 }

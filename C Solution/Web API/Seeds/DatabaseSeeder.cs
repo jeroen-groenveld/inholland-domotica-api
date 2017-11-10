@@ -7,12 +7,12 @@ namespace Web_API.Seeds
 {
     public class DatabaseSeeder : Seeder
     {
-        public DatabaseSeeder(DatabaseContext context) : base(context) { }
+        public DatabaseSeeder(DatabaseContext db) : base(db) { }
 
         public override async Task Run()
         {
-            await this.StartSeeder(new BlogSeeder(this._context), "Blog Seeder");
-            await this.StartSeeder(new PostSeeder(this._context), "Post Seeder");
+            await this.StartSeeder(new BlogSeeder(this._db), "Blog Seeder");
+            await this.StartSeeder(new PostSeeder(this._db), "Post Seeder");
         }
 
         private async Task StartSeeder(Seeder seeder, string name = "")
