@@ -47,7 +47,7 @@ namespace Web_API.Controllers
             // Update state
             House.GetState("lamp " + id + (Status == 0 ? " off" : " on"));
 
-            string Description = House.GetState("whereis lamp " + id) + "Hello";
+            string Description = House.GetState("whereis lamp " + id);
 
             // Verify update
             OnOff = House.GetState("lamp " + id);
