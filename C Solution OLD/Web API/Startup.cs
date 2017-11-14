@@ -11,9 +11,11 @@ using Microsoft.Extensions.Options;
 using Web_API.Models;
 using MySql.Data.MySqlClient;
 using Web_API.Seeds;
+using Web_API.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.IdentityModel.Tokens.Jwt;
 using System.IdentityModel.Tokens;
+
 
 namespace Web_API
 {
@@ -30,6 +32,11 @@ namespace Web_API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            //services.AddMvc(options =>
+            //{
+                
+            //    options.Filters.Add(new TokenAuthorizeAttribute());
+            //});
             services.AddDbContext<DatabaseContext>();
             services.AddTransient<DatabaseSeeder>();
         }
@@ -41,12 +48,12 @@ namespace Web_API
             {
                 app.UseDeveloperExceptionPage();
             }
-
             app.UseMvc();
 
 
+
             //Run seeder
-            seeder.Run().Wait();
+            //seeder.Run().Wait();
         }
     }
 }

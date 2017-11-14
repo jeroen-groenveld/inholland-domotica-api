@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Web_API.Models;
+using Web_API.Middleware;
 
 namespace Web_API.Controllers
 {
+    [MiddlewareFilter(typeof(TokenAuthorize))]
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {

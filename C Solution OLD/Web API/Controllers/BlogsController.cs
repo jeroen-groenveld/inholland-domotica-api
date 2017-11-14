@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Web_API.Models;
+using Microsoft.AspNetCore.Authorization;
+using Web_API.Middleware;
 
 namespace Web_API.Controllers
 {
@@ -21,10 +23,14 @@ namespace Web_API.Controllers
         }
 
         // GET: api/Blogs
+
+
         [HttpGet]
-        public PaginationResult GetBlogs()
+        [MiddlewareFilter(typeof(TokenAuthorize))]
+        public string[] GetBlogs()
         {
-            return this.Pagination(this._db.Blogs);
+            return new string[] { "hey" };
+            //return this.Pagination(this._db.Blogs);
         }
 
         [HttpGet("page/{page}")]

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Owin;
 using Owin;
+using Web_API.Middleware;
 
 [assembly: OwinStartup(typeof(Web_API.Startup))]
 
@@ -13,6 +14,7 @@ namespace Web_API
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);
+            
         }
     }
 }
