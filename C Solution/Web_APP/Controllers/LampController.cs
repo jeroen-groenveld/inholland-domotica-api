@@ -35,5 +35,28 @@ namespace Web_API.Controllers
             House.Close();
             return Json(Lamps);
         }
+
+        public IHttpActionResult Put(int id)
+        {
+            House House = new House();
+
+            // Current state
+            string OnOff = House.GetState("lamp " + id);
+            int Status = OnOff.Contains("Off") ? 1 : 0;
+
+            // Update state
+            House.GetState("lamp " + id + (Status == 0 ? " off" : " on"));
+
+            string Description = House.GetState("whereis lamp " + id) + "Hello";
+
+            // Verify update
+            OnOff = House.GetState("lamp " + id);
+            Status = OnOff.Contains("Off") ? 1 : 0;
+
+            Lamp Lamp = new Lamp { id = id, status = Status, description = Description };
+
+            House.Close();
+            return Json(Lamp);
+        }
     }
 }
