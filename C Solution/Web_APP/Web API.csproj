@@ -187,6 +187,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\HeaterController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\House.cs" />
     <Compile Include="Controllers\LampController.cs" />
@@ -203,6 +204,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Heater.cs" />
     <Compile Include="Models\Lamp.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Window.cs" />
