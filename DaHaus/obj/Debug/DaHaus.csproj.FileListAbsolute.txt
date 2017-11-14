@@ -1,0 +1,12 @@
+C:\Users\jeroe\Desktop\Test\DaHaus\bin\Debug\DaHaus.exe
+C:\Users\jeroe\Desktop\Test\DaHaus\bin\Debug\DaHaus.pdb
+C:\Users\jeroe\Desktop\Test\DaHaus\obj\Debug\DaHaus.csprojResolveAssemblyReference.cache
+C:\Users\jeroe\Desktop\Test\DaHaus\obj\Debug\DaHaus.frmHuis.resources
+C:\Users\jeroe\Desktop\Test\DaHaus\obj\Debug\DaHaus.Heater.resources
+C:\Users\jeroe\Desktop\Test\DaHaus\obj\Debug\DaHaus.Lamp.resources
+C:\Users\jeroe\Desktop\Test\DaHaus\obj\Debug\DaHaus.Properties.Resources.resources
+C:\Users\jeroe\Desktop\Test\DaHaus\obj\Debug\DaHaus.Window.resources
+C:\Users\jeroe\Desktop\Test\DaHaus\obj\Debug\DaHaus.csproj.GenerateResource.Cache
+C:\Users\jeroe\Desktop\Test\DaHaus\obj\Debug\DaHaus.csproj.CoreCompileInputs.cache
+C:\Users\jeroe\Desktop\Test\DaHaus\obj\Debug\DaHaus.exe
+C:\Users\jeroe\Desktop\Test\DaHaus\obj\Debug\DaHaus.pdb

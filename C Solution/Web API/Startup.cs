@@ -11,6 +11,9 @@ using Microsoft.Extensions.Options;
 using Web_API.Models;
 using MySql.Data.MySqlClient;
 using Web_API.Seeds;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens;
 
 namespace Web_API
 {
