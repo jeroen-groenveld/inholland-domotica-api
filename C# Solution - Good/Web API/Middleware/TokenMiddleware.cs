@@ -82,7 +82,7 @@ namespace Web_API.Middleware
             context.Response.StatusCode = 401;
             context.Response.ContentType = "application/json";
 
-            await context.Response.WriteAsync(JsonConvert.SerializeObject(new ApiController.ApiResult("Unauthorized: " + message, true)));
+            await context.Response.WriteAsync(JsonConvert.SerializeObject(new ApiResult("Unauthorized: " + message, true)));
         }
     }
 }

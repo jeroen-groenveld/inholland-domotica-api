@@ -13,11 +13,11 @@ namespace Web_API.Seeds
     {
         public DatabaseSeeder(DatabaseContext db) : base(db) { }
 
-        public override async Task Run()
-        {
-            //await this.StartSeeder(new BlogSeeder(this._db), "Blog Seeder");
+        //public override async Task Run()
+        //{
+        //    //await this.StartSeeder(new BlogSeeder(this._db), "Blog Seeder");
 
-        }
+        //}
 
         private async Task StartSeeder(Seeder seeder, string name = "")
         {

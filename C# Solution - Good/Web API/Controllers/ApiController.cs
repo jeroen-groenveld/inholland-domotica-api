@@ -22,18 +22,6 @@ namespace Web_API.Controllers
             _db = db;
         }
 
-        public class ApiResult
-        {
-            public object result;
-            public bool error;
-
-            public ApiResult(object _result, bool _error = false)
-            {
-                this.result = _result == null ? "" : _result;
-                this.error = _error;
-            }
-        }
-
         public class PaginationResult
         {
             public IEnumerable<object> result;

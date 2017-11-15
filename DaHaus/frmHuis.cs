@@ -53,8 +53,8 @@ namespace DaHaus
         string address = sea.workSocket.RemoteEndPoint.ToString();
         this.lbConnected.Items.Add(address);
 
-            //sea.dataString.Clear();
-            sea.workSocket.Send(UTF8Encoding.UTF8.GetBytes("Hello\r\n"));
+            sea.dataString.Clear();
+            //sea.workSocket.Send(UTF8Encoding.UTF8.GetBytes("Hello\r\n"));
             this.clients.Add(address, sea);
     }
 
