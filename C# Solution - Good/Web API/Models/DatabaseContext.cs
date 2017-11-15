@@ -7,14 +7,23 @@ namespace Web_API.Models
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseMySql(@"Server=127.0.0.1;Port=3306;Database=domotica;Uid=root;Pwd=root;");
+            optionsBuilder.UseSqlServer(Config.Database.CONNECTION_STRING);
         }
 
         //Add the tables here.
-        public DbSet<Blog> Blogs { get; set; }
-        public DbSet<Post> Posts { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<Token> Tokens { get; set; }
+        public DbSet<AccessToken> AccessTokens { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+
+        //Set the Default SQL value to the dates.
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>().Property(p => p.created_at).ValueGeneratedOnAdd().HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<User>().Property(p => p.updated_at).ValueGeneratedOnAddOrUpdate().HasDefaultValueSql("GETDATE()");
+
+            modelBuilder.Entity<AccessToken>().Property(p => p.created_at).ValueGeneratedOnAdd().HasDefaultValueSql("GETDATE()");
+
+            modelBuilder.Entity<RefreshToken>().Property(p => p.expires_at).ValueGeneratedOnAdd().HasDefaultValueSql("GETDATE()");
+        }
     }
 }

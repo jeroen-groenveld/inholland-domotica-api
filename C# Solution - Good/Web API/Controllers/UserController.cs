@@ -25,7 +25,7 @@ namespace Web_API.Controllers
         public ApiResult GetProfile()
         {
             User user = (User)HttpContext.Items["user"];
-            Console.WriteLine(user.name);
+
             var profile = new
             {
                 id = user.id,

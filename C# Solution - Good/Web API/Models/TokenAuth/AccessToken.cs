@@ -9,8 +9,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Web_API.Models.TokenAuth
 {
-    [Table("auth_tokens")]
-    public class Token
+    [Table("auth_access_tokens")]
+    public class AccessToken
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -21,11 +21,12 @@ namespace Web_API.Models.TokenAuth
         [ForeignKey("user_id")]
         public virtual User user { get; set; }
 
+        public RefreshToken refresh_token { get; set; }
+
         [MaxLength(88)]
         public string token { get; set; }
 
         [DataType(DataType.Date)]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime created_at { get; set; }
 
         [DataType(DataType.Date)]

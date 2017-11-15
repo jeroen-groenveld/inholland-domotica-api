@@ -15,23 +15,21 @@ namespace Web_API.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
 
-        [MaxLength(50)]
+        [MaxLength(60)]
         public string email { get; set; }
 
-        [MaxLength(50)]
+        [MaxLength(60)]
         public string name { get; set; }
 
         [MaxLength(88)]
         public string password { get; set; }
 
-        public List<Token> Tokens { get; set; } = new List<Token>();
+        public List<AccessToken> Tokens { get; set; } = new List<AccessToken>();
 
         [DataType(DataType.Date)]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime created_at { get; set; }
 
         [DataType(DataType.Date)]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime updated_at { get; set; }
     }
 }

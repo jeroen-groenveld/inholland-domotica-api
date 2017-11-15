@@ -57,7 +57,7 @@ namespace Web_API.Middleware
             }
 
             //Check if token exists.
-            Token token = db.Tokens.Where(x => x.token == str_token).Include(x => x.user).FirstOrDefault();
+            AccessToken token = db.AccessTokens.Where(x => x.token == str_token).Include(x => x.user).FirstOrDefault();
             if(token == null)
             {
                 await this.Unauthorized(context, "Token not found.");
@@ -67,13 +67,9 @@ namespace Web_API.Middleware
             //Check if token is expired.
             if(token.expires_at < DateTime.Now)
             {
-                db.Remove(token);
-                await db.SaveChangesAsync();
                 await this.Unauthorized(context, "Token expired.");
                 return;
             }
-
-
 
             //Finnally when everything is fine, add the user to the context. Now controllers can access the Authorized user.
             context.Items["user"] = token.user;
@@ -86,7 +82,7 @@ namespace Web_API.Middleware
             context.Response.StatusCode = 401;
             context.Response.ContentType = "application/json";
 
-            await context.Response.WriteAsync(JsonConvert.SerializeObject(new ApiController.ApiResult(message, "Unauthorized")));
+            await context.Response.WriteAsync(JsonConvert.SerializeObject(new ApiController.ApiResult("Unauthorized: " + message, true)));
         }
     }
 }
