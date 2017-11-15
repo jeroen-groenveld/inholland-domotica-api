@@ -18,8 +18,8 @@
     },
 			"Web_API": {
 				"commandName": "Project",
-				"launchBrowser": true,
-				"launchUrl": "api/blogs",
+				"launchBrowser": false,
+				"launchUrl": "api/user",
 				"environmentVariables": {
 					"ASPNETCORE_ENVIRONMENT": "Development"
 				},

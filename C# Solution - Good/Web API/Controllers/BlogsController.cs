@@ -20,6 +20,7 @@ namespace Web_API.Controllers
         public BlogsController(DatabaseContext db)
         {
             _db = db;
+  
         }
 
         // GET: api/Blogs

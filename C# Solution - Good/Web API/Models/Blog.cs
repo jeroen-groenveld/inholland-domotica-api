@@ -30,6 +30,6 @@ namespace Web_API.Models
         public DateTime udpated_at { get; set; }
 
 
-        protected List<Post> Posts { get; set; } = new List<Post>();
+        public List<Post> Posts { get; set; } = new List<Post>();
     }
 }

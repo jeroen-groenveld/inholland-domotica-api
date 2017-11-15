@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Web_API.Models.TokenAuth;
 
 namespace Web_API.Models
 {
@@ -12,5 +13,8 @@ namespace Web_API.Models
         //Add the tables here.
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<Post> Posts { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Token> Tokens { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }
