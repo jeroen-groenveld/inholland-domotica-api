@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Web_API.Models;
+using Web_API.Models.House;
 using Web_API.Middleware;
 
 namespace Web_API.Controllers.House
@@ -14,14 +15,6 @@ namespace Web_API.Controllers.House
         //Constructor
         public LampController(DatabaseContext db) : base(db) { }
 
-        public class Lamp
-        {
-            public int id { get; set; }
-            public bool on { get; set; }
-            public int floor { get; set; }
-            public string location { get; set;  }
-        }
-
         [HttpGet]
         [MiddlewareFilter(typeof(TokenAuthorize))]
         public ApiResult Get()
@@ -29,36 +22,60 @@ namespace Web_API.Controllers.House
             House house = new House();
 
             //Connect to DaHause show error when not able to connect.
-            if(house.Connect(out ApiResult result) == false)
+            if (house.Connect() == false)
             {
-                return result;
+                return new ApiResult("Could not connect to DaHaus.", false);
             }
 
-            //Number of lamps
-            int numberOfLamps = int.Parse(house.GetResponse("lamps"));
-
-            // Create array for lamps
-            Lamp[] Lamps = new Lamp[numberOfLamps];
-
-            // Ask status foreach lamp
-            for (int index = 0; index < Lamps.Length; index++)
-            {
-                bool Status = house.GetResponse("lamp " + index.ToString()).Contains("On");
-                string Description = house.GetResponse("whereis lamp " + index);
-                int Floor = int.Parse(Description.Split('@')[1].Split(' ')[1]);
-                string Location = Description.Split('@')[1].Split(' ')[2];
-
-                Lamps[index] = new Lamp { id = index + 1, on = Status, floor = Floor, location = Location };
-            }
+            Item[] Items = house.GetList(House.LAMP_CMD_NAME, House.LAMP_CMD_LIST_NAME);
 
             //Close connection to the house.
             house.Close();
-            return new ApiResult(Lamps);
+            return new ApiResult(Items);
         }
 
-        //[HttpPut("")]
-        //[MiddlewareFilter(typeof(TokenAuthorize))]
+        [HttpPut("switch/{id}")]
+        [MiddlewareFilter(typeof(TokenAuthorize))]
+        public ApiResult Switch(int id)
+        {
+            return this.SetLight(id, true);
+        }
 
+        [HttpPut("on/{id}")]
+        [MiddlewareFilter(typeof(TokenAuthorize))]
+        public ApiResult On(int id)
+        {
+            return this.SetLight(id, false, true);
+        }
 
+        [HttpPut("off/{id}")]
+        [MiddlewareFilter(typeof(TokenAuthorize))]
+        public ApiResult Off(int id)
+        {
+            return this.SetLight(id, false, false);
+        }
+
+        private ApiResult SetLight(int id, bool Switch, bool on = false)
+        {
+            House house = new House();
+
+            //Connect to DaHause show error when not able to connect.
+            if (house.Connect() == false)
+            {
+                return new ApiResult("Could not connect to DaHaus.", false);
+            }
+
+            string NewStatus = (on ? "on" : "off");            
+            //Check if the lamp exists.
+            Item Item = house.SetItem(id, House.LAMP_CMD_NAME, House.LAMP_CMD_LIST_NAME, Switch, NewStatus);
+            house.Close();
+
+            if (Item == null)
+            {
+                return new ApiResult("Could not find item with this id('"+id+"').", true);
+            }
+
+            return new ApiResult(Item);
+        }
     }
 }
