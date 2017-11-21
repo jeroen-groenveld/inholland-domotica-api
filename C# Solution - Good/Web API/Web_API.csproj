@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <RootNamespace>Web_API</RootNamespace>
+    <AssemblyName>Web_API</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
