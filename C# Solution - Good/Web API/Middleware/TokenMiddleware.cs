@@ -31,8 +31,6 @@ namespace Web_API.Middleware
 
         public async Task Invoke(HttpContext context, DatabaseContext db)
         {
-            Console.WriteLine("LOL");
-
             User user = await Authenticate(context, db, true);
             if(user == null)
             {
@@ -45,12 +43,12 @@ namespace Web_API.Middleware
             await _next.Invoke(context);
         }
 
-        private static async Task<User> Authenticate(HttpContext context, DatabaseContext db, bool Debug = false)
+        private static async Task<User> Authenticate(HttpContext context, DatabaseContext db, bool debug = false)
         {
             //Check if the Authorization header exists.
             if (context.Request.Headers.Keys.Contains("Authorization") == false)
             {
-                await Unauthorized(context, "No Authorization header found.");
+                await Unauthorized(context, "No Authorization header found.", debug);
                 return null;
             }
 
@@ -58,7 +56,7 @@ namespace Web_API.Middleware
             string headerValue = context.Request.Headers["Authorization"];
             if (headerValue.Substring(0, 5) != "Token")
             {
-                await Unauthorized(context, "Authorization header is invalid.");
+                await Unauthorized(context, "Authorization header is invalid.", debug);
                 return null;
             }
 
@@ -66,7 +64,7 @@ namespace Web_API.Middleware
             string str_token = headerValue.Substring(6);
             if (str_token.Length != 88)
             {
-                await Unauthorized(context, "Token length is invalid.");
+                await Unauthorized(context, "Token length is invalid.", debug);
                 return null;
             }
 
@@ -74,23 +72,23 @@ namespace Web_API.Middleware
             AccessToken token = db.AccessTokens.Where(x => x.token == str_token).Include(x => x.user).FirstOrDefault();
             if (token == null)
             {
-                await Unauthorized(context, "Token not found.");
+                await Unauthorized(context, "Token not found.", debug);
                 return null;
             }
 
             //Check if token is expired.
             if (token.expires_at < DateTime.Now)
             {
-                await Unauthorized(context, "Token expired.");
+                await Unauthorized(context, "Token expired.", debug);
                 return null;
             }
 
             return token.user;
         }
 
-        public static async Task<bool> IsAuthicated(HttpContext context, DatabaseContext db, bool Debug = false)
+        public static async Task<bool> IsAuthicated(HttpContext context, DatabaseContext db, bool debug = false)
         {
-            if(await Authenticate(context, db) != null)
+            if(await Authenticate(context, db, debug) != null)
             {
                 return true;
             }
