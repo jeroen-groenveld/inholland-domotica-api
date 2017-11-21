@@ -17,16 +17,16 @@ namespace Web_API.Scheduler
             _db = db;
         }
 
-        public void Run()
+        public async Task Run()
         {
-            Console.WriteLine("Performing token cleaning...");
+            Console.WriteLine("Removing expired tokens...");
             List<AccessToken> accessTokens = this._db.AccessTokens.Where(x => x.expires_at < DateTime.Now).ToList();
             List<RefreshToken> refreshTokens = this._db.RefreshTokens.Where(x => x.expires_at < DateTime.Now).ToList();
             Console.WriteLine("Removed {0} expired access tokens.", accessTokens.Count());
             Console.WriteLine("Removed {0} expired refresh tokens.", refreshTokens.Count());
-            this._db.RemoveRange(accessTokens);
             this._db.RemoveRange(refreshTokens);
-            this._db.SaveChangesAsync();
+            this._db.RemoveRange(accessTokens);
+            await this._db.SaveChangesAsync();
         }
     }
 }

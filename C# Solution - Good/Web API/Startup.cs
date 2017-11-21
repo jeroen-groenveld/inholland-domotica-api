@@ -38,12 +38,13 @@ namespace Web_API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            //services.AddDbContext<DatabaseContext>();
+
             services.AddDbContext<DatabaseContext>();
+            services.AddHangfire(x => x.UseSqlServerStorage(Config.Database.CONNECTION_STRING));
 
             services.AddTransient<DatabaseSeeder>();
             services.AddTransient<Tasks>();
-            services.AddHangfire(x => x.UseSqlServerStorage(Config.Database.CONNECTION_STRING));
+            services.AddTransient<HangfireAuth>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,6 +54,9 @@ namespace Web_API
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.ApplyAccessControl();
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -62,7 +66,12 @@ namespace Web_API
             });
 
             //GlobalConfiguration.Configuration.UseSqlServerStorage();
-            app.UseHangfireDashboard();
+            app.UseHangfireDashboard(
+                "/tasks",
+                new DashboardOptions
+                {
+                    Authorization = new [] { new HangfireAuth() }
+                });
             app.UseHangfireServer();
 
             tasks.Run();

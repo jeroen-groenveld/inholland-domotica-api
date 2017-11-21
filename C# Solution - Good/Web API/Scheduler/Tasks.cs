@@ -17,7 +17,7 @@ namespace Web_API.Scheduler
             //Add your tasks here.
 
             //Do task hourly.
-            RecurringJob.AddOrUpdate(() => new TokenCleaner(this._db).Run(), Cron.Hourly);
+            RecurringJob.AddOrUpdate(() => new TokenCleaner(this._db).Run(), Cron.Minutely);
         }
     }
 }
