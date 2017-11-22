@@ -28,7 +28,7 @@ bld/
 Migrations/
 
 # database string config
-Config/Database.cs
+Web API/Config/Database.cs
 
 # Visual Studio 2015 cache/options directory
 .vs/
