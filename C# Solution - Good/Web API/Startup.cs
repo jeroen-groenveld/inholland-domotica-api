@@ -40,15 +40,11 @@ namespace Web_API
             services.AddMvc();
 
             services.AddDbContext<DatabaseContext>();
-            services.AddHangfire(x => x.UseSqlServerStorage(Config.Database.CONNECTION_STRING));
-
-            services.AddTransient<DatabaseSeeder>();
-            services.AddTransient<Tasks>();
-            services.AddTransient<HangfireAuth>();
+            services.AddHangfire(x => x.UseSqlServerStorage(env.CONNECTION_STRING));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, DatabaseSeeder seeder, Tasks tasks)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -65,7 +61,6 @@ namespace Web_API
                     defaults: new { controller = "Home", action = "Index" });
             });
 
-            //GlobalConfiguration.Configuration.UseSqlServerStorage();
             app.UseHangfireDashboard(
                 "/tasks",
                 new DashboardOptions
@@ -74,9 +69,8 @@ namespace Web_API
                 });
             app.UseHangfireServer();
 
-            tasks.Run();
-            //Run seeder
-            //seeder.Run().Wait();
+            Tasks.Run();
+            DatabaseSeeder.Run();
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Web_API.Models
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(Config.Database.CONNECTION_STRING);
+            optionsBuilder.UseSqlServer(env.CONNECTION_STRING);
         }
 
         //Add the tables here.

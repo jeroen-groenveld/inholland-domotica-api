@@ -9,17 +9,15 @@ using System.Collections.Generic;
 
 namespace Web_API.Seeds
 {
-    public class DatabaseSeeder : Seeder
+    public class DatabaseSeeder
     {
-        public DatabaseSeeder(DatabaseContext db) : base(db) { }
+        public static void Run()
+        {
+            //Add your seeders here.
+            StartSeeder(new UserSeeder(), "User seeder");
+        }
 
-        //public override async Task Run()
-        //{
-        //    //await this.StartSeeder(new BlogSeeder(this._db), "Blog Seeder");
-
-        //}
-
-        private async Task StartSeeder(Seeder seeder, string name = "")
+        private static async void StartSeeder(Seeder seeder, string name = "")
         {
             Stopwatch stopWatch = new Stopwatch();
 

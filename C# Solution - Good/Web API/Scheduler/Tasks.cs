@@ -3,21 +3,14 @@ using Web_API.Models;
 
 namespace Web_API.Scheduler
 {
-    public class Tasks
+    public static class Tasks
     {
-        protected DatabaseContext _db;
-
-        public Tasks(DatabaseContext db)
-        {
-            _db = db;
-        }
-
-        public void Run()
+        public static void Run()
         {
             //Add your tasks here.
 
             //Do task hourly.
-            RecurringJob.AddOrUpdate(() => new TokenCleaner(this._db).Run(), Cron.Minutely);
+            RecurringJob.AddOrUpdate(() => new TokenCleaner().Run(), Cron.Hourly);
         }
     }
 }
