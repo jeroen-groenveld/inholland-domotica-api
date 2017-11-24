@@ -10,10 +10,8 @@ using Web_API.Middleware;
 namespace Web_API.Controllers.House
 {
     [Route(Config.App.API_ROOT_PATH + "/house/lamps")]
-    public class LampController : ApiController
+    public class LampController
     {
-        //Constructor
-        public LampController(DatabaseContext db) : base(db) { }
 
         [HttpGet]
         [MiddlewareFilter(typeof(TokenAuthorize))]

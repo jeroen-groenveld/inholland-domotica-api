@@ -10,10 +10,8 @@ using Web_API.Middleware;
 namespace Web_API.Controllers.House
 {
     [Route(Config.App.API_ROOT_PATH + "/house/windows")]
-    public class WindowController : ApiController
+    public class WindowController
     { 
-        //Constructor
-        public WindowController(DatabaseContext db) : base(db) { }
 
         [HttpGet]
         [MiddlewareFilter(typeof(TokenAuthorize))]
