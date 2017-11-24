@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Web_API.Controllers
 {
 
-    [Route("api/auth")]
+    [Route(Config.Api.API_ROOT_PATH + "/auth")]
     public class TokenController : ApiController
     {
         //APP Key.
@@ -23,7 +23,6 @@ namespace Web_API.Controllers
         //Constructor
         public TokenController(DatabaseContext db) : base(db) { }
 
-        [ValidateAntiForgeryToken]
         [HttpPost("authorize")]
         public ApiResult Authorize(MUserLogin userLogin)
         {
@@ -46,7 +45,6 @@ namespace Web_API.Controllers
             return new ApiResult("Not Authorized.");
         }
 
-        [ValidateAntiForgeryToken]
         [HttpPost("token/refresh")]
         public ApiResult RefreshToken(MRefreshToken refreshToken)
         {
@@ -63,7 +61,6 @@ namespace Web_API.Controllers
             return new ApiResult("Invalid request", true);
         }
 
-        [ValidateAntiForgeryToken]
         [HttpPost("register")]
         public ApiResult Register(MUserRegister userRegister)
         {
