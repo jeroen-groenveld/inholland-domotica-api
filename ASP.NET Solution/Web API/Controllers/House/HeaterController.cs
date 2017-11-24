@@ -10,11 +10,9 @@ using Web_API.Middleware;
 namespace Web_API.Controllers.House
 {
     [Route(Config.App.API_ROOT_PATH + "/house/heater")]
-    public class HeaterController : ApiController
+    public class HeaterController
     {
-        //Constructor
-        public HeaterController(DatabaseContext db) : base(db) { }
-
+  
         [HttpGet]
         [MiddlewareFilter(typeof(TokenAuthorize))]
         public ApiResult Get()

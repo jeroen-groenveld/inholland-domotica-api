@@ -11,15 +11,15 @@ namespace Web_API.Controllers
     [Produces("application/json")]
     public class ApiController : Controller
     {
-        protected readonly DatabaseContext _db;
+        protected readonly DatabaseContext db;
 
         //Pagination settings.
         private const int PAGE_COUNT = 20;
         private const int PAGE_COUNT_MAX = 50;
 
-        public ApiController(DatabaseContext db)
+        public ApiController(DatabaseContext _db)
         {
-            _db = db;
+            this.db = _db;
         }
 
         public class PaginationResult

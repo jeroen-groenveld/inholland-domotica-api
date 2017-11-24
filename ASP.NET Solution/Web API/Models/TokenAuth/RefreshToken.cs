@@ -21,8 +21,5 @@ namespace Web_API.Models.TokenAuth
 
         [ForeignKey("access_token_id")]
         public virtual AccessToken access_token { get; set; }
-
-        [DataType(DataType.Date)]
-        public DateTime expires_at { get; set; }
     }
 }
