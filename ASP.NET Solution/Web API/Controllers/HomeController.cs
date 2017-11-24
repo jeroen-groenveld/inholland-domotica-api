@@ -13,5 +13,11 @@ namespace Web_API.Controllers
         {
             return View("home");
         }
+
+		[Route(Config.App.API_ROOT_PATH)]
+		public ActionResult AppIndex()
+		{
+			return View("app");
+		}
     }
 }

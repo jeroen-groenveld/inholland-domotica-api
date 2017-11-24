@@ -24,7 +24,7 @@ namespace Web_API.Controllers.House
             //Connect to DaHause show error when not able to connect.
             if (house.Connect() == false)
             {
-                return new ApiResult("Could not connect to DaHaus.", false);
+                return new ApiResult("Could not connect to DaHaus.", true);
             }
 
             Item[] Items = house.GetList(House.LAMP_CMD_NAME, House.LAMP_CMD_LIST_NAME);
@@ -62,7 +62,7 @@ namespace Web_API.Controllers.House
             //Connect to DaHause show error when not able to connect.
             if (house.Connect() == false)
             {
-                return new ApiResult("Could not connect to DaHaus.", false);
+                return new ApiResult("Could not connect to DaHaus.", true);
             }
 
             string NewStatus = (on ? "on" : "off");            

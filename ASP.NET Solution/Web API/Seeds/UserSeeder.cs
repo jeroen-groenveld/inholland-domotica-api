@@ -19,7 +19,7 @@ namespace Web_API.Seeds
                 password = "4SnBlWfr5pCG/H+QjFnF2Gh5DK+GVEyYp0bc4em3wFDGnkpK7s5IB7GC5brm0nXpX5p870KDxd4/56RPCe91Xw=="
             };
 
-            db.Add(user);
+            db.Add<User>(user);
             await db.SaveChangesAsync();
         }
     }

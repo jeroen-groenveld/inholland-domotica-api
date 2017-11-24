@@ -48,15 +48,15 @@ namespace Web_API.Controllers
         [HttpPost("token/refresh")]
         public ApiResult RefreshToken(MRefreshToken refreshToken)
         {
-            //try
-            //{
-                //Check if the model is valid.
-                if (ModelState.IsValid)
+			try
+			{
+				//Check if the model is valid.
+				if (ModelState.IsValid)
                 {
                     return this.RefreshAccessToken(refreshToken);
                 }
-            //}
-            //catch { }
+			}
+            catch { }
 
             return new ApiResult("Invalid request", true);
         }

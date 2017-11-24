@@ -24,7 +24,7 @@ namespace Web_API.Controllers.House
             //Connect to DaHause show error when not able to connect.
             if (house.Connect() == false)
             {
-                return new ApiResult("Could not connect to DaHaus.", false);
+                return new ApiResult("Could not connect to DaHaus.", true);
             }
 
             double Temperature = house.GetHeaterTemperature();
@@ -49,7 +49,7 @@ namespace Web_API.Controllers.House
             //Connect to DaHause show error when not able to connect.
             if (house.Connect() == false)
             {
-                return new ApiResult("Could not connect to DaHaus.", false);
+                return new ApiResult("Could not connect to DaHaus.", true);
             }
 
             // Update status
