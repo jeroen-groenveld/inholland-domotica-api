@@ -8,23 +8,32 @@ using Web_API.Models.TokenAuth;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Web_API.Controllers;
 
 namespace Web_API.Controllers
 {
+	public class MRefreshToken
+	{
+		[Required]
+		[MaxLength(88)]
+		public string token { get; set; }
+	}
 
-    [Route(Config.App.API_ROOT_PATH + "/auth")]
+
+	[Route(Config.App.API_ROOT_PATH + "/auth")]
     public class TokenController : ApiController
     {
         //APP Key.
-        byte[] SALT = UTF8Encoding.UTF8.GetBytes("Sosgq78hIbV5hd8KvD2Z56c2hPmbrcsTBpGcMx8q0Yu9s8qSVT3ecQMTyP6W1bHs");
-        int ACCESS_TOKEN_EXPIRE = 10;
-        int REFRESH_TOKEN_EXPIRE = 30;
+        //int ACCESS_TOKEN_EXPIRE = 10;
+        //int REFRESH_TOKEN_EXPIRE = 30;
 
         //Constructor
         public TokenController(DatabaseContext db) : base(db) { }
 
         [HttpPost("authorize")]
-        public ApiResult Authorize(MUserLogin userLogin)
+        public ApiResult Authorize(UserLogin userLogin)
         {
             try
             {
@@ -62,7 +71,7 @@ namespace Web_API.Controllers
         }
 
         [HttpPost("register")]
-        public ApiResult Register(MUserRegister userRegister)
+        public ApiResult Register(UserRegister userRegister)
         {
             try
             {
@@ -77,68 +86,7 @@ namespace Web_API.Controllers
             return new ApiResult("Wrong credentials.");
         }
 
-        private ApiResult AuthenticateUser(MUserLogin userLogin, out User _user)
-        {
-            _user = null;
-            User user = this._db.Users.Where(x => x.email == userLogin.email).FirstOrDefault();
 
-            //Check if user exists
-            if (user == null)
-            {
-                return new ApiResult("User does not exist.", true);
-            }
-
-            //Get sha 512 hash of the password stored in the database.
-            byte[] db_pass_hash_with_salt = Convert.FromBase64String(user.password);
-
-            //Hash the given password and check it against database password.
-            using (SHA512 sha = new SHA512Managed())
-            {
-                byte[] pass = UTF8Encoding.UTF8.GetBytes(userLogin.password);
-                byte[] pass_with_salt = pass.Concat(this.SALT).ToArray();
-
-                byte[] pass_hash_with_salt = sha.ComputeHash(pass_with_salt);
-                if(db_pass_hash_with_salt.SequenceEqual(pass_hash_with_salt))
-                {
-                    _user = user;
-                    return null;
-                }
-            }
-
-            return new ApiResult("Wrong password.", true);
-        }
-
-        private ApiResult RegisterUser(MUserRegister userRegister)
-        {
-            if(this._db.Users.Where(x => x.email == userRegister.email).FirstOrDefault() != null)
-            {
-                return new ApiResult("This e-mail is already in use.", true);
-            }
-
-            //Get password bytes.
-            byte[] pass = UTF8Encoding.UTF8.GetBytes(userRegister.password);
-
-            //Convert hash and password to base64.
-            string hash_pass;
-            using (SHA512 sha = new SHA512Managed())
-            {
-                byte[] pass_with_salt = pass.Concat(this.SALT).ToArray();
-                hash_pass = Convert.ToBase64String(sha.ComputeHash(pass_with_salt));
-            }
-
-            User user = new User()
-            {
-                email = userRegister.email,
-                name = userRegister.name,
-                password = hash_pass
-            };
-
-            //Save user
-            this._db.Add(user);
-            this._db.SaveChanges();
-
-            return new ApiResult("User registerd.");
-        }
 
         private ApiResult RefreshAccessToken(MRefreshToken refreshToken)
         {
