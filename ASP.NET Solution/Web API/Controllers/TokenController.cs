@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Web_API.Controllers
 {
 
-    [Route(Config.Api.API_ROOT_PATH + "/auth")]
+    [Route(Config.App.API_ROOT_PATH + "/auth")]
     public class TokenController : ApiController
     {
         //APP Key.

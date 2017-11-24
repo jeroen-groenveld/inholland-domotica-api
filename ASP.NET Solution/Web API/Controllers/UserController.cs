@@ -8,7 +8,7 @@ using Web_API.Middleware;
 
 namespace Web_API.Controllers
 {
-    [Route(Config.Api.API_ROOT_PATH + "/user")]
+    [Route(Config.App.API_ROOT_PATH + "/user")]
     public class UserController : ApiController
     {
         //Constructor

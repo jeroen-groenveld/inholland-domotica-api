@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Web_API.Config
 {
-    public static class Api
+    public static class App
     {
 		public const string API_ROOT_PATH = "v1";
     }

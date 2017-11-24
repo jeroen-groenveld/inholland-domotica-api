@@ -9,7 +9,7 @@ using Web_API.Middleware;
 
 namespace Web_API.Controllers.House
 {
-    [Route(Config.Api.API_ROOT_PATH + "/house/heater")]
+    [Route(Config.App.API_ROOT_PATH + "/house/heater")]
     public class HeaterController : ApiController
     {
         //Constructor

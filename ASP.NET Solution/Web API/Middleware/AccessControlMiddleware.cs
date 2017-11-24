@@ -32,7 +32,7 @@ namespace Web_API.Middleware
         public static bool IsApi(this PathString path)
         {
             string _path = path.ToString();
-            if(_path.Length >= Config.Api.API_ROOT_PATH.Length + 2 && _path.Substring(0, Config.Api.API_ROOT_PATH.Length + 2) == "/"+ Config.Api.API_ROOT_PATH + "/")
+            if(_path.Length >= Config.App.API_ROOT_PATH.Length + 2 && _path.Substring(0, Config.App.API_ROOT_PATH.Length + 2) == "/"+ Config.App.API_ROOT_PATH + "/")
             {
                 return true;
             }
