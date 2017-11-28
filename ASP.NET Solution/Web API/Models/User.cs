@@ -22,6 +22,10 @@ namespace Web_API.Models
         [MaxLength(60)]
         public string name { get; set; }
 
+        public int background_id { get; set;}
+
+        [ForeignKey("background_id")]
+        public virtual Background background { get; set; }
         //The total length of hashed password in bits is PASSWORD_HASH_SIZE + PASSWORD_HASH_SALT_SIZE.
         //base64 converts the bytes to characters, characters are 6 bits.
         //So the length of the base64 string is the total hashed password in bit divided by 6.
@@ -35,6 +39,12 @@ namespace Web_API.Models
         public string password { get; set; }
 
         public List<AccessToken> Tokens { get; set; } = new List<AccessToken>();
+
+        public List<ActiveWidget> ActiveWidgets { get; set; } = new List<ActiveWidget>();
+
+        public List<Score> Scores { get; set; } = new List<Score>();
+
+        public List<Bookmark> Bookmarks { get; set; } = new List<Bookmark>();
 
         [DataType(DataType.Date)]
         public DateTime created_at { get; set; }

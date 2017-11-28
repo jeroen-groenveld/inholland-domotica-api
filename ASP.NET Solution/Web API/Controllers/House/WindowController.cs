@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Web_API.Models;
-using Web_API.Models.House;
 using Web_API.Middleware;
 
 namespace Web_API.Controllers.House

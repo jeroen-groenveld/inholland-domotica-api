@@ -6,7 +6,20 @@ using System.Linq;
 using System.Security.Cryptography;
 using Web_API.Middleware;
 using Web_API.Models;
-
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using Web_API.Models;
+using Web_API.Models.TokenAuth;
 
 namespace Web_API.Controllers
 {
@@ -40,7 +53,80 @@ namespace Web_API.Controllers
             return new ApiResult(profile);
         }
 
-		[HttpPost("register")]
+        [HttpGet("background")]
+        [MiddlewareFilter(typeof(TokenAuthorize))]
+        public ApiResult GetBackground()
+        {
+            User user = (User)HttpContext.Items["user"];
+            Background background = user.background;
+
+            var result = new
+            {
+                id = background.id,
+                name = background.name,
+                description = background.description,
+                data = background.data
+            };
+
+            return new ApiResult(result);
+        }
+
+        [HttpGet("widgets")]
+        [MiddlewareFilter(typeof(TokenAuthorize))]
+        public ApiResult GetWidgets()
+        {
+            User user = (User)HttpContext.Items["user"];
+
+            List<ActiveWidget> activeWidgets = user.ActiveWidgets.ToList();
+
+            List<object> result = new List<object>();
+            foreach(ActiveWidget aw in activeWidgets)
+            {
+                var resultItem = new
+                {
+                    position = aw.position,
+                    widget = new
+                    {
+                        name = aw.widget.name,
+                        description = aw.widget.description,
+                        width = aw.widget.size_w,
+                        height = aw.widget.size_h
+                    }
+                };
+
+                result.Add(resultItem);
+            }
+
+            return new ApiResult(result);
+        }
+
+        [HttpGet("bookmarks")]
+        [MiddlewareFilter(typeof(TokenAuthorize))]
+        public ApiResult GetBookmarks()
+        {
+            User user = (User)HttpContext.Items["user"];
+
+            List<Bookmark> bookmarks = user.Bookmarks.ToList();
+
+            List<object> result = new List<object>();
+            foreach (Bookmark bookmark in bookmarks)
+            {
+                var resultItem = new
+                {
+                    name = bookmark.name,
+                    url = bookmark.url,
+                    created_at = bookmark.created_at,
+                    updated_at = bookmark.updated_at
+                };
+
+                result.Add(resultItem);
+            }
+
+            return new ApiResult(result);
+        }
+
+
+        [HttpPost("register")]
 		public ApiResult Register(UserRegister userRegister)
 		{
             if(ModelState.IsValid == false)

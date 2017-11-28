@@ -69,8 +69,7 @@ namespace Web_API
                 });
             app.UseHangfireServer();
 
-            Tasks.Run();
-            DatabaseSeeder.Run();
+            //Tasks.Run();
         }
     }
 }

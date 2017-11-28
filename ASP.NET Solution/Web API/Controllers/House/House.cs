@@ -1,10 +1,24 @@
 ﻿using System;
 using System.Net.Sockets;
-using Web_API.Models.House;
 using System.Collections.Generic;
 
 namespace Web_API.Controllers.House
 {
+    public class Heater
+    {
+        public int id { get; set; }
+        public double temperature { get; set; }
+    }
+
+    public class Item
+    {
+        public int id { get; set; }
+        public string type { get; set; }
+        public bool status { get; set; }
+        public int floor { get; set; }
+        public string location { get; set; }
+    }
+
     public class House
     {
         public TcpClient client;
