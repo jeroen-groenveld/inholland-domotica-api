@@ -38,7 +38,7 @@ namespace Web_API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-
+            services.AddCors();
             services.AddDbContext<DatabaseContext>();
             services.AddHangfire(x => x.UseSqlServerStorage(env.CONNECTION_STRING));
         }
@@ -60,6 +60,15 @@ namespace Web_API
                     template: "",
                     defaults: new { controller = "Home", action = "Index" });
             });
+
+            app.UseCors(builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       //.AllowCredentials()
+                       .WithHeaders("accept", "content-type", "origin", "authorization");
+            });
+                
 
             app.UseHangfireDashboard(
                 "/tasks",
