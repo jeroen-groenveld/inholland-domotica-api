@@ -1,15 +1,12 @@
 ﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Cryptography;
 using Web_API.Middleware;
 using Web_API.Models;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -58,7 +55,7 @@ namespace Web_API.Controllers
         public ApiResult GetBackground()
         {
             User user = (User)HttpContext.Items["user"];
-            Background background = user.background;
+            Background background = this.db.Users.Where(x => x.id == user.id).Include(x => x.background).FirstOrDefault().background;
 
             var result = new
             {
@@ -147,7 +144,8 @@ namespace Web_API.Controllers
             {
                 email = userRegister.email,
                 name = userRegister.name,
-                password = pass_hash
+                password = pass_hash,
+                background_id = 1,
             };
 
             //Save user

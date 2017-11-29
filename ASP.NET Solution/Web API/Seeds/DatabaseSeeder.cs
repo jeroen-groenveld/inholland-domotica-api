@@ -14,7 +14,7 @@ namespace Web_API.Seeds
         public static void Run()
         {
             //Add your seeders here.
-            StartSeeder(new UserSeeder(), "User seeder");
+            StartSeeder(new BackgroundSeeder(), "Background seeder");
         }
 
         private static async void StartSeeder(Seeder seeder, string name = "")
