@@ -34,7 +34,7 @@ namespace Web_API.Controllers
 
         [HttpGet("profile")]
         [MiddlewareFilter(typeof(TokenAuthorize))]
-        public ApiResult GetProfile()
+        public IActionResult GetProfile()
         {
             User user = (User)HttpContext.Items["user"];
 
@@ -47,12 +47,12 @@ namespace Web_API.Controllers
                 updated_at = user.updated_at
             };
 
-            return new ApiResult(profile);
+            return Ok(profile);
         }
 
         [HttpGet("background")]
         [MiddlewareFilter(typeof(TokenAuthorize))]
-        public ApiResult GetBackground()
+        public IActionResult GetBackground()
         {
             User user = (User)HttpContext.Items["user"];
             Background background = this.db.Users.Where(x => x.id == user.id).Include(x => x.background).FirstOrDefault().background;
@@ -65,12 +65,12 @@ namespace Web_API.Controllers
                 data = background.data
             };
 
-            return new ApiResult(result);
+            return Ok(result);
         }
 
         [HttpGet("widgets")]
         [MiddlewareFilter(typeof(TokenAuthorize))]
-        public ApiResult GetWidgets()
+        public IActionResult GetWidgets()
         {
             User user = (User)HttpContext.Items["user"];
 
@@ -94,12 +94,12 @@ namespace Web_API.Controllers
                 result.Add(resultItem);
             }
 
-            return new ApiResult(result);
+            return Ok(result);
         }
 
         [HttpGet("bookmarks")]
         [MiddlewareFilter(typeof(TokenAuthorize))]
-        public ApiResult GetBookmarks()
+        public IActionResult GetBookmarks()
         {
             User user = (User)HttpContext.Items["user"];
 
@@ -119,21 +119,21 @@ namespace Web_API.Controllers
                 result.Add(resultItem);
             }
 
-            return new ApiResult(result);
+            return Ok(result);
         }
 
 
         [HttpPost("register")]
-		public ApiResult Register([FromBody] UserRegister userRegister)
+		public IActionResult Register([FromBody] UserRegister userRegister)
 		{
             if(ModelState.IsValid == false)
             {
-                return new ApiResult("Incorrect post data.", true);
+                return BadRequest("Incorrect post data.");
             }
 
             if (this.db.Users.Where(x => x.email == userRegister.email).FirstOrDefault() != null)
 			{
-				return new ApiResult("This e-mail is already in use.", true);
+				return BadRequest("This e-mail is already in use.");
 			}
 
 			//Hash the password.
@@ -152,7 +152,7 @@ namespace Web_API.Controllers
             this.db.Add(user);
             this.db.SaveChanges();
 
-            return new ApiResult("User registerd.");
+            return Ok("User registerd.");
 		}
 
         public static User Authenticate(UserLogin userLogin)

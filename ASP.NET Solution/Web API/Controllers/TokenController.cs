@@ -26,42 +26,42 @@ namespace Web_API.Controllers
         public TokenController(DatabaseContext _db) : base(_db) { }
 
         [HttpPost("authorize")]
-        public ApiResult Authorize([FromBody] UserLogin userLogin)
+        public IActionResult Authorize([FromBody] UserLogin userLogin)
         {
             if(ModelState.IsValid == false)
             {
-                return new ApiResult("Incorrect post data.", true);
+                return BadRequest("Incorrect post data.");
             }
 
             User user = UserController.Authenticate(userLogin);
             if(user == null)
             {
-                return new ApiResult("Incorrect credentials.", true);
+                return BadRequest("Incorrect credentials.");
             }
 
             return this.GenerateTokens(user);
         }
 
         [HttpPost("token/refresh")]
-        public ApiResult RefreshAccessToken([FromBody] RefreshTokenSubmit refreshToken)
+        public IActionResult RefreshAccessToken([FromBody] RefreshTokenSubmit refreshToken)
         {
             //Check post data.
             if (ModelState.IsValid == false)
             {
-                return new ApiResult("Incorrect post data.", true);
+                return BadRequest("Incorrect post data.");
             }
 
             //Check token length.
             if (refreshToken.token.Length != 88)
             {
-                return new ApiResult("Token length is invalid.", true);
+                return BadRequest("Token length is invalid.");
             }
 
             //Check if the refresh token exists in the database.
             AccessToken accessToken = this.db.AccessTokens.Where(x => x.token == refreshToken.token && x.refresh_token != null).Include(x => x.refresh_token).Include(x => x.user).FirstOrDefault();
             if (accessToken == null)
             {
-                return new ApiResult("Token not found.", true);
+                return BadRequest("Token not found.");
             }
 
             //Remove old tokens for this user.
@@ -82,14 +82,14 @@ namespace Web_API.Controllers
             //Check if the refresh token has expired.
             if (accessToken.expires_at < DateTime.Now)
             {
-                return new ApiResult("Token expired.", true);
+                return BadRequest("Token expired.");
             }
 
             //Generate new tokens.
             return this.GenerateTokens(accessToken.user);
         }
 
-        private ApiResult GenerateTokens(User user)
+        private IActionResult GenerateTokens(User user)
         {
             AccessToken accessToken = this.GenerateToken(user);
             AccessToken refreshAccessToken = this.GenerateToken(user, false);
@@ -119,7 +119,7 @@ namespace Web_API.Controllers
                 refresh_token_expire = refreshAccessToken.expires_at.ToString("MM-dd-yyyy HH:mm:ss"),
             };
 
-            return new ApiResult(result);
+            return Ok(result);
         }
 
         private AccessToken GenerateToken(User user, bool is_access_token = true)
