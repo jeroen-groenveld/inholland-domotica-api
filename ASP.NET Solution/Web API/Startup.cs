@@ -51,7 +51,7 @@ namespace Web_API
                 app.UseDeveloperExceptionPage();
             }
 
-            app.ApplyAccessControl();
+            //app.ApplyAccessControl();
 
             app.UseMvc(routes =>
             {

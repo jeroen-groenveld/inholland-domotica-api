@@ -9,57 +9,58 @@ using Web_API.Middleware;
 namespace Web_API.Controllers.House
 {
     [Route(Config.App.API_ROOT_PATH + "/house/windows")]
-    public class WindowController
+    public class WindowController : Controller
     { 
 
         [HttpGet]
         [MiddlewareFilter(typeof(TokenAuthorize))]
-        public ApiResult Get()
+        public IActionResult Get()
         {
             House house = new House();
 
             //Connect to DaHause show error when not able to connect.
             if (house.Connect() == false)
             {
-                return new ApiResult("Could not connect to DaHaus.", true);
+                return BadRequest("Could not connect to DaHaus.");
             }
 
             Item[] Items = house.GetList(House.WINDOW_CMD_NAME, House.WINDOW_CMD_LIST_NAME);
 
             //Close connection to the house.
             house.Close();
-            return new ApiResult(Items);
+
+            return Ok(Items);
         }
 
         [HttpPut("switch/{id}")]
         [MiddlewareFilter(typeof(TokenAuthorize))]
-        public ApiResult Switch(int id)
+        public IActionResult Switch(int id)
         {
             return this.SetWindow(id, true);
         }
 
         [HttpPut("open/{id}")]
         [MiddlewareFilter(typeof(TokenAuthorize))]
-        public ApiResult Open(int id)
+        public IActionResult Open(int id)
         {
             return this.SetWindow(id, false, true);
         }
 
         [HttpPut("close/{id}")]
         [MiddlewareFilter(typeof(TokenAuthorize))]
-        public ApiResult CLose(int id)
+        public IActionResult CLose(int id)
         {
             return this.SetWindow(id, false, false);
         }
 
-        private ApiResult SetWindow(int id, bool Switch, bool open = false)
+        private IActionResult SetWindow(int id, bool Switch, bool open = false)
         {
             House house = new House();
 
             //Connect to DaHause show error when not able to connect.
             if (house.Connect() == false)
             {
-                return new ApiResult("Could not connect to DaHaus.", true);
+                return BadRequest("Could not connect to DaHaus.");
             }
 
             string NewStatus = (open ? "open" : "close");
@@ -69,10 +70,10 @@ namespace Web_API.Controllers.House
 
             if (Item == null)
             {
-                return new ApiResult("Could not find item with this id('" + id + "').", true);
+                return BadRequest("Could not find item with this id('" + id + "').");
             }
 
-            return new ApiResult(Item);
+            return Ok(Item);
         }
     }
 }

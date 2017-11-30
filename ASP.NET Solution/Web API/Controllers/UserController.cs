@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,16 +8,6 @@ using System.Linq;
 using System.Security.Cryptography;
 using Web_API.Middleware;
 using Web_API.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using Web_API.Models;
-using Web_API.Models.TokenAuth;
 
 namespace Web_API.Controllers
 {
@@ -27,9 +18,9 @@ namespace Web_API.Controllers
         public UserController(DatabaseContext _db) : base(_db) { }
 
         [HttpGet]
-        public ApiResult index()
+        public IActionResult index()
         {
-            return new ApiResult("end-point: user.");
+            return Ok("end-point: user.");
         }
 
         [HttpGet("profile")]
@@ -124,7 +115,7 @@ namespace Web_API.Controllers
 
 
         [HttpPost("register")]
-		public IActionResult Register([FromBody] UserRegister userRegister)
+		public IActionResult Register([FromForm] UserRegister userRegister)
 		{
             if(ModelState.IsValid == false)
             {
