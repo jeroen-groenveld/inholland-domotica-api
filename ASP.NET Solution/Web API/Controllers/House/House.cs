@@ -126,7 +126,18 @@ namespace Web_API.Controllers.House
 
         public Item GetItemInformation(int _id, string cmd_name_item)
         {
-            bool Status = this.GetResponse(cmd_name_item + " " + _id).Contains("On");
+            bool Status = false;
+
+            if (cmd_name_item == LAMP_CMD_NAME)
+            {
+                Status = this.GetResponse(cmd_name_item + " " + _id).Contains("On");
+            }
+
+            if (cmd_name_item == WINDOW_CMD_NAME)
+            {
+                Status = this.GetResponse(cmd_name_item + " " + _id).Contains("Open");
+            }
+
             string Description = this.GetResponse("whereis " + cmd_name_item + " " + _id);
             int Floor = int.Parse(Description.Split('@')[1].Split(' ')[1]);
             string Location = Description.Split('@')[1].Split(' ')[2];

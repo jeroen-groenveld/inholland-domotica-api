@@ -26,7 +26,7 @@ namespace Web_API.Controllers
         public TokenController(DatabaseContext _db) : base(_db) { }
 
         [HttpPost("authorize")]
-        public IActionResult Authorize([FromForm] UserLogin userLogin)
+        public IActionResult Authorize([FromBody] UserLogin userLogin)
         {
             if(ModelState.IsValid == false)
             {
@@ -43,7 +43,7 @@ namespace Web_API.Controllers
         }
 
         [HttpPost("token/refresh")]
-        public IActionResult RefreshAccessToken([FromForm] RefreshTokenSubmit refreshToken)
+        public IActionResult RefreshAccessToken([FromBody] RefreshTokenSubmit refreshToken)
         {
             //Check post data.
             if (ModelState.IsValid == false)
