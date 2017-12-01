@@ -115,7 +115,7 @@ namespace Web_API.Controllers
 
 
         [HttpPost("register")]
-		public IActionResult Register([FromForm] UserRegister userRegister)
+		public IActionResult Register([FromBody] UserRegister userRegister)
 		{
             if(ModelState.IsValid == false)
             {

@@ -51,7 +51,11 @@ namespace Web_API
                 app.UseDeveloperExceptionPage();
             }
 
-            //app.ApplyAccessControl();
+            app.UseCors(builder => builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .WithHeaders("accept", "content-type", "origin", "authorization")
+            );
 
             app.UseMvc(routes =>
             {
@@ -61,19 +65,8 @@ namespace Web_API
                     defaults: new { controller = "Home", action = "Index" });
             });
 
-            app.UseCors(builder =>
-            {
-                builder.AllowAnyOrigin()
-                       .AllowAnyMethod()
-                       //.AllowCredentials()
-                       .WithHeaders("accept", "content-type", "origin", "authorization");
-            });
-                
-
-            app.UseHangfireDashboard(
-                "/tasks",
-                new DashboardOptions
-                {
+            app.UseHangfireDashboard("/tasks",
+                new DashboardOptions {
                     Authorization = new [] { new HangfireAuth() }
                 });
             app.UseHangfireServer();
