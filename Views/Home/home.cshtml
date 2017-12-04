@@ -1,0 +1,49 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+
+*@
+
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400" rel="stylesheet">
+    <style>
+        .container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .title 
+        {
+            display:block;
+            margin:0;
+            font-size:4em;
+            color:#333333;
+            text-align:center;
+            font-family: Roboto;
+            font-weight:100;
+        }
+
+        .title--secure {
+            color: #0ee20e;
+        }
+        .title--grey {
+            color: #c5c5c5;
+        }
+        a
+        {
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="@Domotica_API.env.API_PROTOCOL://@Domotica_API.env.API_DOMAIN/@Domotica_API.Config.App.API_ROOT_PATH">
+            <h1 class="title">
+                <span class="title--secure">@Domotica_API.env.API_PROTOCOL</span><span class="title--grey">://</span>@Domotica_API.env.API_DOMAIN<span class="title--grey">/@Domotica_API.Config.App.API_ROOT_PATH</span></h1>
+        </a>
+    </div>
+</body>
+</html>

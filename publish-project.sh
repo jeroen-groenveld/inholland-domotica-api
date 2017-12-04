@@ -1,6 +1,6 @@
 #!/bin/bash
 
-project="./ASP.NET Solution/Web API/Web_API.csproj"
+project="./inholland-domotica-api.csproj"
 publish_dir="C:\inetpub\wwwroot\api.inholland.it"
 
 #stop the website in iis
