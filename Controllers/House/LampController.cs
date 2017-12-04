@@ -8,7 +8,7 @@ using Domotica_API.Models;
 
 namespace Domotica_API.Controllers.House
 {
-    [Route(Config.App.API_ROOT_PATH + "/house/lamps")]
+    [Route(Config.App.API_ROOT_PATH + "/house/lamp")]
     public class LampController : Controller
     {
 

@@ -173,7 +173,18 @@ namespace Domotica_API.Controllers.House
 
             this.GetResponse(cmd_name_item + " " + id + " " + NewStatus);
 
-            return this.GetItemInformation(id, cmd_name_item);
+            Item result = this.GetItemInformation(id, cmd_name_item);
+
+            //Switch the status of the window result. Reason:
+            //When we close the window the close command will be send.
+            //After that we get the new information for the item(Window). And it will return that the window is still open
+            //This is because the window thing is still animating. When it's done animation(When the window is closed) the status will be updated.
+            if (cmd_name_item == WINDOW_CMD_NAME)
+            {
+                result.status = !result.status;
+            }
+
+            return result;
         }
     }
 }

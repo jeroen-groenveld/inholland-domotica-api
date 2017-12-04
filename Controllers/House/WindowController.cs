@@ -8,7 +8,7 @@ using Domotica_API.Models;
 
 namespace Domotica_API.Controllers.House
 {
-    [Route(Config.App.API_ROOT_PATH + "/house/windows")]
+    [Route(Config.App.API_ROOT_PATH + "/house/window")]
     public class WindowController : Controller
     { 
 
