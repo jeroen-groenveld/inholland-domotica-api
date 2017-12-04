@@ -88,7 +88,7 @@ namespace Domotica_API.Controllers
         }
 
         [HttpPost("register")]
-		public IActionResult Register([FromBody] UserRegister userRegister)
+		public IActionResult Register([FromBody] Validators.UserRegister userRegister)
 		{
             if(ModelState.IsValid == false)
             {
@@ -119,7 +119,7 @@ namespace Domotica_API.Controllers
             return Ok("User registerd.");
 		}
 
-        public static User Authenticate(UserLogin userLogin)
+        public static User Authenticate(Validators.UserLogin userLogin)
 		{
             using (DatabaseContext db = new DatabaseContext())
             {
@@ -194,22 +194,4 @@ namespace Domotica_API.Controllers
             return new_hash;
         }
     }
-
-	public class UserLogin
-	{
-		[Required]
-		[MaxLength(50)]
-		public string email { get; set; }
-
-		[Required]
-		[MaxLength(64), MinLength(8)]
-		public string password { get; set; }
-	}
-
-	public class UserRegister : UserLogin
-	{
-		[Required]
-		[MaxLength(50)]
-        public string name { get; set; }
-	}
 }

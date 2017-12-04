@@ -11,14 +11,6 @@ using Domotica_API.Models.TokenAuth;
 
 namespace Domotica_API.Controllers
 {
-    public class RefreshTokenSubmit
-    {
-        [Required]
-        [MaxLength(88)]
-        public string token { get; set; }
-    }
-
-
     [Route(Config.App.API_ROOT_PATH + "/auth")]
     public class TokenController : ApiController
     {
@@ -26,7 +18,7 @@ namespace Domotica_API.Controllers
         public TokenController(DatabaseContext db) : base(db) { }
 
         [HttpPost("authorize")]
-        public IActionResult Authorize([FromBody] UserLogin userLogin)
+        public IActionResult Authorize([FromBody] Validators.UserLogin userLogin)
         {
             if(ModelState.IsValid == false)
             {
@@ -43,7 +35,7 @@ namespace Domotica_API.Controllers
         }
 
         [HttpPost("token/refresh")]
-        public IActionResult RefreshAccessToken([FromBody] RefreshTokenSubmit refreshToken)
+        public IActionResult RefreshAccessToken([FromBody] Validators.RefreshToken refreshToken)
         {
             //Check post data.
             if (ModelState.IsValid == false)
