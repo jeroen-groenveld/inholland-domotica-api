@@ -14,7 +14,7 @@ namespace Domotica_API.Seeds
                 {
                     name = "Mountain by the lake",
                     description = "",
-                    data = "https://inholland.it/static/backgrounds/mountain-lake.jpg"
+                    url = "https://inholland.it/static/backgrounds/mountain-lake.jpg"
                 });
             }
 
@@ -24,7 +24,7 @@ namespace Domotica_API.Seeds
                 {
                     name = "Mountain",
                     description = "",
-                    data = "https://inholland.it/static/backgrounds/mountain.jpg"
+                    url = "https://inholland.it/static/backgrounds/mountain.jpg"
                 });
             }
 
@@ -34,7 +34,7 @@ namespace Domotica_API.Seeds
                 {
                     name = "Mountain road",
                     description = "",
-                    data = "https://inholland.it/static/backgrounds/road.jpg"
+                    url = "https://inholland.it/static/backgrounds/road.jpg"
                 });
             }
 
@@ -44,7 +44,7 @@ namespace Domotica_API.Seeds
                 {
                     name = "Forest",
                     description = "",
-                    data = "https://inholland.it/static/backgrounds/forest.jpg"
+                    url = "https://inholland.it/static/backgrounds/forest.jpg"
                 });
             }
 

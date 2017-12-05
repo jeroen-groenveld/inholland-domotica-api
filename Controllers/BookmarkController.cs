@@ -40,7 +40,7 @@ namespace Domotica_API.Controllers
         {
             if (ModelState.IsValid == false)
             {
-                return BadRequest("Incorrect data.");
+                return BadRequest("Incorrect url.");
             }
 
             Bookmark bookmark = this.db.Bookmarks.SingleOrDefault(x => x.id == id);

@@ -22,7 +22,7 @@ namespace Domotica_API.Controllers
         {
             if(ModelState.IsValid == false)
             {
-                return BadRequest("Incorrect post data.");
+                return BadRequest("Incorrect post url.");
             }
 
             User user = UserController.Authenticate(userLogin);
@@ -37,10 +37,10 @@ namespace Domotica_API.Controllers
         [HttpPost("token/refresh")]
         public IActionResult RefreshAccessToken([FromBody] Validators.RefreshToken refreshToken)
         {
-            //Check post data.
+            //Check post url.
             if (ModelState.IsValid == false)
             {
-                return BadRequest("Incorrect post data.");
+                return BadRequest("Incorrect post url.");
             }
 
             //Check token length.

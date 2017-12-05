@@ -92,7 +92,7 @@ namespace Domotica_API.Controllers
 		{
             if(ModelState.IsValid == false)
             {
-                return BadRequest("Incorrect post data.");
+                return BadRequest("Incorrect post url.");
             }
 
             if (this.db.Users.SingleOrDefault(x => x.email == userRegister.email) != null)

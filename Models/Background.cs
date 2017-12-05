@@ -26,6 +26,6 @@ namespace Domotica_API.Models
         [IgnoreDataMember]
         public List<User> Users;
 
-        public string data { get; set; }
+        public string url { get; set; }
     }
 }
