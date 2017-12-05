@@ -9,7 +9,6 @@ namespace Domotica_API
     //{
     //    public const string CONNECTION_STRING = "";
 
-    //public const string APP_KEY = "";
     //public const string API_DOMAIN = "localhost:55193";
     //public const string API_PROTOCOL = "http";
 
