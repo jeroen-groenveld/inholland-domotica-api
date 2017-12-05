@@ -8,6 +8,6 @@ namespace Domotica_API.Config
     public static class House
     {
         public const string ADDRESS = "127.0.0.1";
-        public const int PORT = 11000;
+        public const int PORT = 11000;  
     }
 }

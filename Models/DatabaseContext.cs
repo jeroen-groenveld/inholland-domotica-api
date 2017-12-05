@@ -29,24 +29,24 @@ namespace Domotica_API.Models
         public DbSet<Background> Backgrounds { get; set; }
 
         //Set the Default SQL value to the dates.
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            //modelBuilder.Entity<User>().Property(p => p.created_at).ValueGeneratedOnAdd()
-            //    .HasDefaultValueSql("GETDATE()");
-            //modelBuilder.Entity<User>().Property(p => p.updated_at).ValueGeneratedOnAddOrUpdate()
-            //    .HasDefaultValueSql("GETDATE()");
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    //modelBuilder.Entity<User>().Property(p => p.created_at).ValueGeneratedOnAdd()
+        //    //    .HasDefaultValueSql("GETDATE()");
+        //    //modelBuilder.Entity<User>().Property(p => p.updated_at).ValueGeneratedOnAddOrUpdate()
+        //    //    .HasDefaultValueSql("GETDATE()");
 
-            ////modelBuilder.Entity<Bookmark>().Property(p => p.created_at).ValueGeneratedOnAdd().HasDefaultValueSql("GETDATE()");
-            ////modelBuilder.Entity<Bookmark>().Property(p => p.updated_at).HasDefaultValueSql("GETDATE()").ValueGeneratedOnAddOrUpdate();
+        //    ////modelBuilder.Entity<Bookmark>().Property(p => p.created_at).ValueGeneratedOnAdd().HasDefaultValueSql("GETDATE()");
+        //    ////modelBuilder.Entity<Bookmark>().Property(p => p.updated_at).HasDefaultValueSql("GETDATE()").ValueGeneratedOnAddOrUpdate();
 
-            //modelBuilder.Entity<Game>().Property(p => p.created_at).ValueGeneratedOnAdd()
-            //    .HasDefaultValueSql("GETDATE()");
-            //modelBuilder.Entity<Game>().Property(p => p.finished_at).ValueGeneratedOnAdd()
-            //    .HasDefaultValueSql("GETDATE()");
+        //    //modelBuilder.Entity<Game>().Property(p => p.created_at).ValueGeneratedOnAdd()
+        //    //    .HasDefaultValueSql("GETDATE()");
+        //    //modelBuilder.Entity<Game>().Property(p => p.finished_at).ValueGeneratedOnAdd()
+        //    //    .HasDefaultValueSql("GETDATE()");
 
-            //modelBuilder.Entity<AccessToken>().Property(p => p.created_at).ValueGeneratedOnAdd()
-            //    .HasDefaultValueSql("GETDATE()");
-        }
+        //    //modelBuilder.Entity<AccessToken>().Property(p => p.created_at).ValueGeneratedOnAdd()
+        //    //    .HasDefaultValueSql("GETDATE()");
+        //}
 
         public override int SaveChanges()
         {
