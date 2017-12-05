@@ -12,9 +12,9 @@ namespace Domotica_API.Seeds
             {
                 db.Add(new Background
                 {
-                    name = "Background 1",
-                    description = "Beautifull background",
-                    data = "https://i.imgur.com/Ee4rX.jpg"
+                    name = "Mountain by the lake",
+                    description = "",
+                    data = "https://inholland.it/static/backgrounds/mountain-lake.jpg"
                 });
             }
 
@@ -22,9 +22,29 @@ namespace Domotica_API.Seeds
             {
                 db.Add(new Background
                 {
-                    name = "Background 2",
-                    description = "Beautifull background",
-                    data = "https://i.imgur.com/Ee4rX.jpg"
+                    name = "Mountain",
+                    description = "",
+                    data = "https://inholland.it/static/backgrounds/mountain.jpg"
+                });
+            }
+
+            if (db.Backgrounds.SingleOrDefault(x => x.id == 3) == null)
+            {
+                db.Add(new Background
+                {
+                    name = "Mountain road",
+                    description = "",
+                    data = "https://inholland.it/static/backgrounds/road.jpg"
+                });
+            }
+
+            if (db.Backgrounds.SingleOrDefault(x => x.id == 4) == null)
+            {
+                db.Add(new Background
+                {
+                    name = "Forest",
+                    description = "",
+                    data = "https://inholland.it/static/backgrounds/forest.jpg"
                 });
             }
 
