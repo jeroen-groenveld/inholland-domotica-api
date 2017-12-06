@@ -18,10 +18,9 @@ namespace Domotica_API.Controllers
         public BackgroundController(DatabaseContext db) : base(db) { }
 
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Show()
         {
             List<Background> backgrounds = db.Backgrounds.ToList();
-
             return Ok(backgrounds);
         }
 

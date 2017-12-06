@@ -68,10 +68,8 @@ namespace Domotica_API.Controllers
             {
                 return BadRequest("Background does not exist.");
             }
-            else
-            {
-                user.background_id = background.id;
-            }
+            user.background_id = background.id;
+            
 
             //Update name.
             user.name = userProfile.name;
