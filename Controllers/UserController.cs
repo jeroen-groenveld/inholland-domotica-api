@@ -8,6 +8,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using Domotica_API.Middleware;
 using Domotica_API.Models;
+using Bookmark = Domotica_API.Models.Bookmark;
 
 namespace Domotica_API.Controllers
 {
@@ -50,6 +51,37 @@ namespace Domotica_API.Controllers
             return Ok(user);
         }
 
+        [HttpPut("profile")]
+        [MiddlewareFilter(typeof(TokenAuthorize))]
+        public IActionResult UpdateProfile([FromBody] Validators.User.UserProfile userProfile)
+        {
+            if (ModelState.IsValid == false)
+            {
+                return BadRequest("Incorrect post data.");
+            }
+
+            User user = (User)HttpContext.Items["user"];
+
+            //Update background when found.
+            Background background = db.Backgrounds.SingleOrDefault(x => x.id == userProfile.background_id);
+            if (background == null)
+            {
+                return BadRequest("Background does not exist.");
+            }
+            else
+            {
+                user.background_id = background.id;
+            }
+
+            //Update name.
+            user.name = userProfile.name;
+
+            //Save user changes.
+            this.db.SaveChanges();
+
+            return Ok(user);
+        }
+
         [HttpGet("background")]
         [MiddlewareFilter(typeof(TokenAuthorize))]
         public IActionResult GetBackground()
@@ -58,23 +90,6 @@ namespace Domotica_API.Controllers
             Background background = db.Backgrounds.SingleOrDefault(x => x.id == user.background_id);
 
             return Ok(background);
-        }
-
-        [HttpPut("background/{id}")]
-        [MiddlewareFilter(typeof(TokenAuthorize))]
-        public IActionResult UpdateBackground(int id)
-        {
-            User user = (User)HttpContext.Items["user"];
-            Background background = db.Backgrounds.SingleOrDefault(x => x.id == id);
-            if (background == null)
-            {
-                return BadRequest("Background does not exist.");
-            }
-
-            user.background_id = background.id;
-            db.SaveChanges();
-
-            return Ok("Background updated.");
         }
 
         [HttpGet("bookmarks")]
@@ -88,11 +103,11 @@ namespace Domotica_API.Controllers
         }
 
         [HttpPost("register")]
-		public IActionResult Register([FromBody] Validators.UserRegister userRegister)
+		public IActionResult Register([FromBody] Validators.User.UserRegister userRegister)
 		{
             if(ModelState.IsValid == false)
             {
-                return BadRequest("Incorrect post url.");
+                return BadRequest("Incorrect post data.");
             }
 
             if (this.db.Users.SingleOrDefault(x => x.email == userRegister.email) != null)
@@ -119,7 +134,7 @@ namespace Domotica_API.Controllers
             return Ok("User registerd.");
 		}
 
-        public static User Authenticate(Validators.UserLogin userLogin)
+        public static User Authenticate(Validators.User.UserLogin userLogin)
 		{
             using (DatabaseContext db = new DatabaseContext())
             {

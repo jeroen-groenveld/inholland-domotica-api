@@ -71,8 +71,6 @@ namespace Domotica_API
                     Authorization = new [] { new HangfireAuth() }
                 });
             app.UseHangfireServer();
-
-            Scheduler.Run();
         }
     }
 }

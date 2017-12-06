@@ -16,7 +16,7 @@ namespace Domotica_API.Controllers
 
         [HttpGet("{id}")]
         [MiddlewareFilter(typeof(TokenAuthorize))]
-        public IActionResult Get(int id)
+        public IActionResult Show(int id)
         {
             Bookmark bookmark = this.db.Bookmarks.SingleOrDefault(x => x.id == id);
             if (bookmark == null)
@@ -33,6 +33,20 @@ namespace Domotica_API.Controllers
             return Ok(bookmark);
         }
 
+        [HttpPost("{id}")]
+        [MiddlewareFilter(typeof(TokenAuthorize))]
+        public IActionResult Create(int id, [FromBody] Validators.Bookmark newBookmark)
+        {
+            if (ModelState.IsValid == false)
+            {
+                return BadRequest("Incorrect post data.");
+            }
+
+            this.db.Add(newBookmark);
+            this.db.SaveChanges();
+
+            return Ok(newBookmark);
+        }
 
         [HttpPut("{id}")]
         [MiddlewareFilter(typeof(TokenAuthorize))]
@@ -40,7 +54,7 @@ namespace Domotica_API.Controllers
         {
             if (ModelState.IsValid == false)
             {
-                return BadRequest("Incorrect url.");
+                return BadRequest("Incorrect post data.");
             }
 
             Bookmark bookmark = this.db.Bookmarks.SingleOrDefault(x => x.id == id);
@@ -82,6 +96,5 @@ namespace Domotica_API.Controllers
 
             return Ok("removed");
         }
-
     }
 }

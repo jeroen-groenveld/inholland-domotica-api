@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Domotica_API.Models;
+using Domotica_API.Schedules;
 using Domotica_API.Seeds;
 
 namespace Domotica_API
@@ -19,6 +20,7 @@ namespace Domotica_API
         {
             var host = BuildWebHost(args);
             DatabaseSeeder.Initialize();
+            Scheduler.Initialize();
             host.Run();
         }
 

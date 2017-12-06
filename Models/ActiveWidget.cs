@@ -26,6 +26,8 @@ namespace Domotica_API.Models
         [ForeignKey("widget_id")]
         public virtual Widget widget { get; set; }
 
-        public string position { get; set; }
+        public int position_x { get; set; }
+
+        public int position_y { get; set; }
     }
 }

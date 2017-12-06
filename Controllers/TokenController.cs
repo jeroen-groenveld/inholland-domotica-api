@@ -18,7 +18,7 @@ namespace Domotica_API.Controllers
         public TokenController(DatabaseContext db) : base(db) { }
 
         [HttpPost("authorize")]
-        public IActionResult Authorize([FromBody] Validators.UserLogin userLogin)
+        public IActionResult Authorize([FromBody] Validators.User.UserLogin userLogin)
         {
             if(ModelState.IsValid == false)
             {

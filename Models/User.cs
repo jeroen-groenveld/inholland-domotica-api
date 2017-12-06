@@ -23,7 +23,6 @@ namespace Domotica_API.Models
         [MaxLength(60)]
         public string name { get; set; }
 
-        [IgnoreDataMember]
         public int background_id { get; set;}
 
         [IgnoreDataMember]

@@ -6,7 +6,7 @@ namespace Domotica_API.Schedules
 {
     public static class Scheduler
     {
-        public static void Run()
+        public static void Initialize()
         {
             //Add your tasks here.
 
