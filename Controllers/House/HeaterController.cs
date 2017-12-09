@@ -29,15 +29,13 @@ namespace Domotica_API.Controllers.House
             return Ok(result);
         }
 
-        [HttpPut("temperature/{temperature}")]
+        [HttpPut("temperature")]
         [MiddlewareFilter(typeof(TokenAuthorize))]
-        public IActionResult Put(double temperature)
+        public IActionResult Put([FromBody] Validators.House.Heater heater)
         {
-            temperature = Math.Round(temperature, 1);
-
-            if (temperature > House.HEATER_MAX || temperature < House.HEATER_MIN)
+            if (ModelState.IsValid == false)
             {
-                return BadRequest("Invalid temperature. Min: " + House.HEATER_MIN.ToString() + " Max: " + House.HEATER_MAX + ".");
+                return BadRequest("Incorrect post data");
             }
 
             House house = new House();
@@ -49,7 +47,7 @@ namespace Domotica_API.Controllers.House
             }
 
             // Update status
-            house.SetHeaterTemperature(temperature);
+            house.SetHeaterTemperature(heater.temperature);
 
             // Verify update
             double Temperature = house.GetHeaterTemperature();

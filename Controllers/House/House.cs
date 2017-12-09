@@ -24,16 +24,16 @@ namespace Domotica_API.Controllers.House
         public TcpClient client;
         public NetworkStream stream;
 
-        public static readonly int HEATER_ID = 1;
-        public static readonly int HEATER_MAX = 35;
-        public static readonly int HEATER_MIN = 12;
-        public static readonly string HEATER_CMD_NAME = "heater";
+        public const int HEATER_ID = 1;
+        public const  int HEATER_MAX = 35;
+        public const int HEATER_MIN = 12;
+        public const string HEATER_CMD_NAME = "heater";
 
-        public static readonly string LAMP_CMD_NAME = "lamp";
-        public static readonly string LAMP_CMD_LIST_NAME = "lamps";
+        public const string LAMP_CMD_NAME = "lamp";
+        public const string LAMP_CMD_LIST_NAME = "lamps";
 
-        public static readonly string WINDOW_CMD_NAME = "window";
-        public static readonly string WINDOW_CMD_LIST_NAME = "windows";
+        public const string WINDOW_CMD_NAME = "window";
+        public const string WINDOW_CMD_LIST_NAME = "windows";
 
         public bool Connect()
         {
