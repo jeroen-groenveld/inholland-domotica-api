@@ -13,5 +13,7 @@ namespace Domotica_API
     //public const string API_PROTOCOL = "http";
 
     //public const string HOUSE_SCREENSHOT_FILE = "";
+
+    //public const string WEATHER_API_KEY = "";
     //}
 }
