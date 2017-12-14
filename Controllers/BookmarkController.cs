@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domotica_API.Controllers
 {
+    [MiddlewareFilter(typeof(TokenAuthorize))]
     [Microsoft.AspNetCore.Mvc.Route(Config.App.API_ROOT_PATH + "/bookmark")]
     public class BookmarkController : ApiController
     {
@@ -18,7 +19,6 @@ namespace Domotica_API.Controllers
         public BookmarkController(DatabaseContext db) : base(db){}
 
         [HttpGet]
-        [MiddlewareFilter(typeof(TokenAuthorize))]
         public IActionResult Show(int id)
         {
             User user = (User)HttpContext.Items["user"];
@@ -27,7 +27,6 @@ namespace Domotica_API.Controllers
         }
 
         [HttpPost]
-        [MiddlewareFilter(typeof(TokenAuthorize))]
         public IActionResult Create([FromBody] Validators.Bookmark newBookmark)
         {
             if (ModelState.IsValid == false)
@@ -54,7 +53,6 @@ namespace Domotica_API.Controllers
         }
 
         [HttpPut("{id}")]
-        [MiddlewareFilter(typeof(TokenAuthorize))]
         public IActionResult Update(int id, [FromBody] Validators.Bookmark newBookmark)
         {
             if (ModelState.IsValid == false)
@@ -87,7 +85,6 @@ namespace Domotica_API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [MiddlewareFilter(typeof(TokenAuthorize))]
         public IActionResult Delete(int id)
         {
             Bookmark bookmark = this.db.Bookmarks.SingleOrDefault(x => x.id == id);

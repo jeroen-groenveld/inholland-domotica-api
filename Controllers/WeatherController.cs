@@ -5,12 +5,14 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Domotica_API.Controllers;
+using Domotica_API.Middleware;
 using Domotica_API.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Domotica_API.Controllers
 {
     [Route(Config.App.API_ROOT_PATH + "/weather")]
+    [MiddlewareFilter(typeof(TokenAuthorize))]
     public class WeatherController : ApiController
     {
         //Constructor
