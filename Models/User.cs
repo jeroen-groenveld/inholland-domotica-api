@@ -49,9 +49,12 @@ namespace Domotica_API.Models
         public List<ActiveWidget> ActiveWidgets { get; set; } = new List<ActiveWidget>();
 
         [IgnoreDataMember]
-        public List<Score> Scores { get; set; } = new List<Score>();
+        public List<Move> Moves { get; set; } = new List<Move>();
 
-        [IgnoreDataMember]
+	    [IgnoreDataMember]
+	    public List<Game> Games { get; set; } = new List<Game>();
+
+		[IgnoreDataMember]
         public List<Bookmark> Bookmarks { get; set; } = new List<Bookmark>();
     }
 }
