@@ -28,6 +28,15 @@ namespace Domotica_API.Models
         public DbSet<Bookmark> Bookmarks { get; set; }
         public DbSet<Background> Backgrounds { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder mb)
+        {
+            mb.Entity<User>().HasMany(s => s.GamesPlayer1).WithOne(s => s.User1).HasForeignKey(s => s.user1_id).OnDelete(DeleteBehavior.Restrict);
+            mb.Entity<User>().HasMany(s => s.GamesPlayer2).WithOne(s => s.User2).HasForeignKey(s => s.user2_id).OnDelete(DeleteBehavior.Restrict);
+            mb.Entity<User>().HasMany(s => s.GamesWon).WithOne(s => s.UserWinner).HasForeignKey(s => s.user_winner_id).OnDelete(DeleteBehavior.Restrict);
+
+           
+
+        }
 
         public override int SaveChanges()
         {

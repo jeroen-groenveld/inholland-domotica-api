@@ -51,10 +51,16 @@ namespace Domotica_API.Models
         [IgnoreDataMember]
         public List<Move> Moves { get; set; } = new List<Move>();
 
-	    [IgnoreDataMember]
-	    public List<Game> Games { get; set; } = new List<Game>();
-
 		[IgnoreDataMember]
         public List<Bookmark> Bookmarks { get; set; } = new List<Bookmark>();
+
+        [IgnoreDataMember]
+        public virtual List<Game> GamesPlayer1 { get; set; } = new List<Game>();
+
+        [IgnoreDataMember]
+        public virtual List<Game> GamesPlayer2 { get; set; } = new List<Game>();
+
+        [IgnoreDataMember]
+        public virtual List<Game> GamesWon { get; set; } = new List<Game>();
     }
 }

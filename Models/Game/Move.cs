@@ -26,7 +26,10 @@ namespace Domotica_API.Models
 	    [ForeignKey("user_id")]
 	    public virtual User user { get; set; }
 
-	    [Range(1, 9)]
+	    [Range(0, 8)]
 		public int position { get; set; }
+
+        [Range(0, 8)]
+        public int move_count { get; set; }
     }
 }

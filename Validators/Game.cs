@@ -8,8 +8,9 @@ namespace Domotica_API.Validators
 {
     public class GameCreate
     {
-	    public int user_2_id { get; set; }
-	}
+        [MaxLength(60)]
+        public string player2_email { get; set; }
+    }
 
 	public class GameJoin
 	{
@@ -23,7 +24,7 @@ namespace Domotica_API.Validators
 		public int game_id { get; set; }
 
 		[Required]
-		[Range(1, 9)]
+		[Range(0, 8)]
 		public int position { get; set; }
 	}
 }
