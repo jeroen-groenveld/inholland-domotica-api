@@ -399,12 +399,14 @@ namespace Domotica_API.Controllers
             User user = (User)HttpContext.Items["user"];
             int loses = this.db.Games.Count(x => (x.User1 == user || x.User2 == user) && x.UserWinner != user && x.status == GameStatus.finished);
             int wins = this.db.Games.Count(x => x.UserWinner == user && x.status == GameStatus.finished);
+            int ties = this.db.Games.Count(x => (x.User1 == user || x.User2 == user) && x.UserWinner == null && x.status == GameStatus.finished);
             int total_games_played = this.db.Games.Count(x => (x.User1 == user || x.User2 == user) && x.status == GameStatus.finished);
 
             return new
             {
                 wins = wins,
                 loses = loses,
+                ties = ties,
                 total_games_played = total_games_played
             };
         }
