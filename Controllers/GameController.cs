@@ -23,7 +23,7 @@ namespace Domotica_API.Controllers
             {
                 invites = UserInvites(),
                 started = UserGamesStarted(),
-                lobby = GameLobbyList(),
+                lobby_list = GameLobbyList(),
                 finished = UserGamesFinished(),
                 stats = UserStats()
             };
