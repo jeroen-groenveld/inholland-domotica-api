@@ -23,8 +23,7 @@ namespace Domotica_API.Models
         [MaxLength(350)]
         public string description { get; set; }
 
-        public int size_w { get; set; }
-
-        public int size_h { get; set; }
+        [MaxLength(60)]
+        public string component_name { get; set; }
     }
 }

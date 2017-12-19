@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Domotica_API.Models
 {
+    [Table("game_moves")]
     public class Move : Date.DateModelCreatedAt
     {
 		[Key]

@@ -24,7 +24,7 @@ namespace Domotica_API.Models
         public DbSet<Game> Games { get; set; }
         public DbSet<Move> Moves { get; set; }
         public DbSet<Widget> Widgets { get; set; }
-        public DbSet<ActiveWidget> ActiveWidgets { get; set; }
+        public DbSet<UserWidget> UserWidgets { get; set; }
         public DbSet<Bookmark> Bookmarks { get; set; }
         public DbSet<Background> Backgrounds { get; set; }
 

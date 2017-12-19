@@ -14,6 +14,7 @@ namespace Domotica_API.Seeds
             StartSeeder<BackgroundSeeder>();
             StartSeeder<UserSeeder>();
             StartSeeder<BookmarkSeeder>();
+            StartSeeder<WidgetSeeder>();
         }
 
         private static async void StartSeeder<T>(string name = "") where T : Seeder, new()

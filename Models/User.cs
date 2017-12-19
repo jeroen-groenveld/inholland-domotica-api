@@ -48,7 +48,7 @@ namespace Domotica_API.Models
         public List<AccessToken> Tokens { get; set; } = new List<AccessToken>();
 
         [IgnoreDataMember]
-        public List<ActiveWidget> ActiveWidgets { get; set; } = new List<ActiveWidget>();
+        public List<UserWidget> Widgets { get; set; } = new List<UserWidget>();
 
         [IgnoreDataMember]
         public List<Move> Moves { get; set; } = new List<Move>();
