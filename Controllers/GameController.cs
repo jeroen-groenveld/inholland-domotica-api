@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Domotica_API.Controllers
 {
@@ -71,6 +70,13 @@ namespace Domotica_API.Controllers
         public IActionResult PostCreateGame([FromBody] Validators.GameCreate gameCreate)
         {
             Result result = this.CreateGame(gameCreate);
+
+            if (result.ResultFunc == this.Ok)
+            {
+                PusherServer.Pusher pusher = Pusher.Pusher.Create();
+                pusher.TriggerAsync(channelName: "game_" + ((GameData)result.Data).id, eventName: "game_create", data: result.Data);
+            }
+
             return result.ResultFunc(result.Data);
         }
 
@@ -78,6 +84,13 @@ namespace Domotica_API.Controllers
         public IActionResult UpdateJoinGame([FromBody] Validators.GameJoin gameJoin)
         {
             Result result = this.JoinGame(gameJoin);
+
+            if (result.ResultFunc == this.Ok)
+            {
+                PusherServer.Pusher pusher = Pusher.Pusher.Create();
+                pusher.TriggerAsync(channelName: "game_" + ((GameData)result.Data).id, eventName: "game_join", data: result.Data);
+            }
+
             return result.ResultFunc(result.Data);
         }
 
@@ -85,6 +98,13 @@ namespace Domotica_API.Controllers
         public IActionResult PostCreateMove([FromBody] Validators.Move move)
         {
             Result result = this.CreateMove(move);
+
+            if (result.ResultFunc == this.Ok)
+            {
+                PusherServer.Pusher pusher = Pusher.Pusher.Create();
+                pusher.TriggerAsync(channelName: "game_" + ((GameData)result.Data).id, eventName: "create_move", data: result.Data);
+            }
+
             return result.ResultFunc(result.Data);
         }
         #endregion
@@ -337,12 +357,13 @@ namespace Domotica_API.Controllers
                 return new Result { ResultFunc = this.BadRequest, Data = "Position already chosen." };
             }
 
-            int moves = this.db.Moves.Where(x => x.game_id == game.id).ToList().Count;
+            int move_count = this.db.Moves.Where(x => x.game_id == game.id).ToList().Count;
             //If move_count == 8 then this means this is the last set. So the game has been finished and it's a tie.
-            int move_count = moves + 1;
+            //If it's not a tie, this is possible when the last move(count == 8). Then the winner will be set at winning move check.
             if (move_count == 8)
             {
                 game.status = GameStatus.finished;
+                game.finished_at = DateTime.Now;
             }
 
             this.db.Add(new Move
@@ -370,7 +391,7 @@ namespace Domotica_API.Controllers
 
 
         #region "Read functions"
-        private List<object> UserInvites()
+        private List<GameData> UserInvites()
         {
             User user = (User)HttpContext.Items["user"];
             List<Game> games = this.db.Games.Where(x => x.User2 == user && x.status == GameStatus.waiting_invite).Include(x => x.User1).ToList();
@@ -378,7 +399,7 @@ namespace Domotica_API.Controllers
             return FilterGameResults(games);
         }
 
-        private List<object> UserGamesStarted()
+        private List<GameData> UserGamesStarted()
         {
             User user = (User)HttpContext.Items["user"];
             List<Game> games = this.db.Games.Where(x => (x.User1 == user || x.User2 == user) && x.status == GameStatus.started).Include(x => x.User1).Include(x => x.User2).Include(x => x.Moves).ToList();
@@ -386,7 +407,7 @@ namespace Domotica_API.Controllers
             return FilterGameResults(games);
         }
 
-        private List<object> UserGamesFinished()
+        private List<GameData> UserGamesFinished()
         {
             User user = (User)HttpContext.Items["user"];
             List<Game> games = this.db.Games.Where(x => (x.User1 == user || x.User2 == user) && x.status == GameStatus.finished).Include(x => x.User1).Include(x => x.User2).Include(x => x.Moves).Include(x => x.UserWinner).ToList();
@@ -411,7 +432,7 @@ namespace Domotica_API.Controllers
             };
         }
 
-        private List<object> GameLobbyList()
+        private List<GameData> GameLobbyList()
         {
             User user = (User)HttpContext.Items["user"];
             List<Game> games = this.db.Games.Where(x => x.status == GameStatus.waiting_join && x.User1 != user).Include(x => x.User1).Include(x => x.User2).ToList();
@@ -442,9 +463,9 @@ namespace Domotica_API.Controllers
 
 
         #region "Functions that filter certain properties from the game Model"
-        private List<object> FilterGameResults(List<Game> games)
+        private List<GameData> FilterGameResults(List<Game> games)
         {
-            List<object> result = new List<object>();
+            List<GameData> result = new List<GameData>();
             foreach (Game game in games)
             {
                 result.Add(FilterGameResults(game));
@@ -452,22 +473,22 @@ namespace Domotica_API.Controllers
             return result;
         }
 
-        private object FilterGameResults(Game game)
+        private GameData FilterGameResults(Game game)
         {
-            return new
+            return new GameData
             {
                 id = game.id,
-                user1 = new
+                user1 = new GameData.GameUserData
                 {
                     id = game.User1.id,
                     name = game.User1.name
                 },
-                user2 = new
+                user2 = new GameData.GameUserData
                 {
                     id = game.User2?.id,
                     name = game.User2?.name
                 },
-                user_winner = new
+                winner = new GameData.GameUserData
                 {
                     id = game.UserWinner?.id,
                     name = game.UserWinner?.name
@@ -480,6 +501,24 @@ namespace Domotica_API.Controllers
         }
         #endregion
 
+        public class GameData
+        {
+            public int id;
+            public GameUserData user1;
+            public GameUserData user2;
+            public GameUserData winner;
+
+            public List<Move> moves;
+            public int status;
+            public DateTime? created_at;
+            public DateTime? finished_at;
+
+            public class GameUserData
+            {
+                public int? id;
+                public string name;
+            }
+        }
 
         public class Result
         {

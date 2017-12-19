@@ -15,5 +15,10 @@ namespace Domotica_API
     //public const string HOUSE_SCREENSHOT_FILE = "";
 
     //public const string WEATHER_API_KEY = "";
+
+    //public const string PUSHER_APPID = "";
+    //public const string PUSHER_KEY = "";
+    //public const string PUSHER_SECRET = "";
+    //public const string PUSHER_CLUSTER = "";
     //}
 }
