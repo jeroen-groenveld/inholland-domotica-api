@@ -48,7 +48,7 @@ namespace Domotica_API.Seeds
                 });
             }
 
-            if (db.Backgrounds.SingleOrDefault(x => x.id == 2) == null)
+            if (db.Backgrounds.SingleOrDefault(x => x.id == 5) == null)
             {
                 db.Add(new Background
                 {
