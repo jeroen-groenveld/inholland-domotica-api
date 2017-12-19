@@ -42,7 +42,7 @@ namespace Domotica_API.Models
         [MaxLength((Config.Hash.PASSWORD_HASH_SIZE + Config.Hash.PASSWORD_HASH_SALT_SIZE) / 6)]
         public string password { get; set; }
 
-        public bool is_admin { get; set; }
+        public bool is_admin { get; set; } = false;
 
         [IgnoreDataMember]
         public List<AccessToken> Tokens { get; set; } = new List<AccessToken>();

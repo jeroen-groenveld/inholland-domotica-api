@@ -15,6 +15,7 @@ namespace Domotica_API.Seeds
                 name = "Jeroen Groenveld",
                 email = "jeroengroenveld@live.nl",
                 background_id = 1,
+                is_admin = true,
                 password = Convert.ToBase64String(UserController.HashPassword("Hoi12345"))
             };
             if (db.Users.SingleOrDefault(x => x.email == newUserJeroen.email) == null)
@@ -33,6 +34,20 @@ namespace Domotica_API.Seeds
             if (db.Users.SingleOrDefault(x => x.email == newUserTest.email) == null)
             {
                 db.Add(newUserTest);
+            }
+
+
+            User newUserThijs = new User
+            {
+                name = "Thijs Bouwes",
+                email = "thijsbouwes@gmail.com",
+                background_id = 1,
+                is_admin = true,
+                password = Convert.ToBase64String(UserController.HashPassword("Hoi12345"))
+            };
+            if (db.Users.SingleOrDefault(x => x.email == newUserTest.email) == null)
+            {
+                db.Add(newUserThijs);
             }
 
             await db.SaveChangesAsync();
