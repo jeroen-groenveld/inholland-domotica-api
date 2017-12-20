@@ -5,10 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net.Mail;
+using System.Net.Mime;
 using System.Security.Cryptography;
 using Domotica_API.Middleware;
 using Domotica_API.Models;
-using Bookmark = Domotica_API.Models.Bookmark;
+using Microsoft.Extensions.Logging.AzureAppServices.Internal;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 namespace Domotica_API.Controllers
 {
@@ -125,12 +129,32 @@ namespace Domotica_API.Controllers
                 background_id = 1,
             };
 
+            //Send register mail
+            this.SendRegisterMail(user);
+
             //Save user
             this.db.Add(user);
             this.db.SaveChanges();
 
             return Ok("User registerd.");
 		}
+
+        private void SendRegisterMail(User user)
+        {
+            var msg = new SendGridMessage();
+            msg.AddTo(user.email, user.name);
+            msg.From = new EmailAddress("info@inholland.it", "Inholland Domotica Project");
+            msg.Subject = "Registration";
+
+            string html = System.IO.File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "/Email/register.html");
+            html = html.Replace("[$name]", user.name);
+
+            msg.HtmlContent = html;
+            msg.PlainTextContent = "Hi " + user.name + ". Thanks for registering!";
+
+            var transport = new SendGridClient(env.SENDGRID_API_KEY);
+            transport.SendEmailAsync(msg);
+        }
 
         public static User Authenticate(Validators.User.UserLogin userLogin)
 		{

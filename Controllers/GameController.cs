@@ -8,6 +8,8 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using PusherServer;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 namespace Domotica_API.Controllers
 {

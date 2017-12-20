@@ -20,5 +20,7 @@ namespace Domotica_API
     //public const string PUSHER_KEY = "";
     //public const string PUSHER_SECRET = "";
     //public const string PUSHER_CLUSTER = "";
+
+    //public const string SENDGRID_API_KEY = "";
     //}
 }
