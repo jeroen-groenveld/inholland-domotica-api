@@ -51,17 +51,17 @@ namespace Domotica_API.Seeds
 
             await db.SaveChangesAsync();
 
-            Game game = new Game
-            {
-                created_at = DateTime.Now,
-                finished_at = DateTime.Now,
-                User1 = db.Users.SingleOrDefault(x => x.email == newUserJeroen.email),
-                UserWinner = db.Users.SingleOrDefault(x => x.email == newUserJeroen.email),
-                status = GameStatus.finished
-            };
-            db.Add(game);
+            //Game game = new Game
+            //{
+            //    created_at = DateTime.Now,
+            //    finished_at = DateTime.Now,
+            //    User1 = db.Users.SingleOrDefault(x => x.email == newUserJeroen.email),
+            //    UserWinner = db.Users.SingleOrDefault(x => x.email == newUserJeroen.email),
+            //    status = GameStatus.finished
+            //};
+            //db.Add(game);
 
-            await db.SaveChangesAsync();
+            //await db.SaveChangesAsync();
         }
     }
 }
