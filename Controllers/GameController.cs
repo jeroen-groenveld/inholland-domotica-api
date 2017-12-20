@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using PusherServer;
 using SendGrid;
@@ -28,13 +29,16 @@ namespace Domotica_API.Controllers
         [HttpGet]
         public IActionResult GetUserGameInfo()
         {
+            User user = (User)HttpContext.Items["user"];
+
             object result = new
             {
                 invites = UserInvites(),
                 started = UserGamesStarted(),
                 lobby_list = GameLobbyList(),
                 finished = UserGamesFinished(),
-                stats = UserStats()
+                stats = UserStats(user),
+                highscore = Highscore()
             };
             return Ok(result);
         }
@@ -49,7 +53,8 @@ namespace Domotica_API.Controllers
         [HttpGet("user/stats")]
         public IActionResult GetUserStats()
         {
-            return Ok(UserStats());
+            User user = (User)HttpContext.Items["user"];
+            return Ok(UserStats(user));
         }
 
         [HttpGet("user/invites")]
@@ -68,6 +73,12 @@ namespace Domotica_API.Controllers
         public IActionResult GetUserGamesFinished()
         {
             return Ok(UserGamesFinished());
+        }
+
+        [HttpGet("highscore")]
+        public IActionResult GetHighscore()
+        {
+            return Ok(this.Highscore());
         }
 
         [HttpGet("list")]
@@ -443,6 +454,33 @@ namespace Domotica_API.Controllers
 
 
         #region "Read functions"
+        private List<object> Highscore()
+        {
+            List<Game> games = this.db.Games.Where(x => x.status == GameStatus.finished).ToList();
+
+            Dictionary<User, int> scores = new Dictionary<User, int>();
+            foreach (Game game in games)
+            {
+                if (game.UserWinner != null)
+                {
+                    if (scores.ContainsKey(game.UserWinner) == false)
+                    {
+                        scores[game.UserWinner] = 0;
+                    }
+                    scores[game.UserWinner]++;
+                }
+            }
+            var sorted = scores.OrderBy(x => x.Value).Take(3);
+
+            List<object> result = new List<object>();
+            foreach (KeyValuePair<User, int> user in sorted)
+            {
+                 result.Add(this.UserStats(user.Key));
+            }
+
+            return result;
+        }
+
         private List<GameData> UserInvites()
         {
             User user = (User)HttpContext.Items["user"];
@@ -467,16 +505,16 @@ namespace Domotica_API.Controllers
             return FilterGameResults(games);
         }
 
-        private object UserStats()
+        private object UserStats(User user)
         {
-            User user = (User)HttpContext.Items["user"];
-            int loses = this.db.Games.Count(x => (x.User1 == user || x.User2 == user) && x.UserWinner != user && x.status == GameStatus.finished);
+            int loses = this.db.Games.Count(x => (x.User1 == user || x.User2 == user) && x.UserWinner == x.User2 && x.status == GameStatus.finished);
             int wins = this.db.Games.Count(x => x.UserWinner == user && x.status == GameStatus.finished);
             int ties = this.db.Games.Count(x => (x.User1 == user || x.User2 == user) && x.UserWinner == null && x.status == GameStatus.finished);
             int total_games_played = this.db.Games.Count(x => (x.User1 == user || x.User2 == user) && x.status == GameStatus.finished);
 
             return new
             {
+                user = user.name,
                 wins = wins,
                 loses = loses,
                 ties = ties,
