@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using PusherServer;
 
 namespace Domotica_API.Controllers
 {
@@ -13,6 +16,11 @@ namespace Domotica_API.Controllers
     public class GameController : ApiController
     {
         public GameController(DatabaseContext db) : base(db) { }
+
+        private string PRIVATE_USER_CHANNELNAME = "private-userchannel-";
+        private string PRIVATE_GAME_CHANNELNAME = "private-gamechannel-";
+        private string PUBLIC_GAME_CHANNEL = "public-games";
+
 
         #region "HTTP Requests"
         [HttpGet]
@@ -74,7 +82,17 @@ namespace Domotica_API.Controllers
             if (result.ResultFunc == this.Ok)
             {
                 PusherServer.Pusher pusher = Pusher.Pusher.Create();
-                pusher.TriggerAsync(channelName: "game_" + ((GameData)result.Data).id, eventName: "game_create", data: result.Data);
+
+                GameData game = (GameData) result.Data;
+                //check if there is a player 2
+                if (game.user2.id != null)
+                {
+                    pusher.TriggerAsync(channelName: this.PRIVATE_USER_CHANNELNAME + ((GameData)result.Data).user2.id, eventName: "game_invite", data: result.Data);
+                }
+                else
+                {
+                    pusher.TriggerAsync(channelName: this.PUBLIC_GAME_CHANNEL, eventName: "game_created", data: result.Data);
+                }
             }
 
             return result.ResultFunc(result.Data);
@@ -88,7 +106,7 @@ namespace Domotica_API.Controllers
             if (result.ResultFunc == this.Ok)
             {
                 PusherServer.Pusher pusher = Pusher.Pusher.Create();
-                pusher.TriggerAsync(channelName: "game_" + ((GameData)result.Data).id, eventName: "game_join", data: result.Data);
+                pusher.TriggerAsync(channelName: this.PRIVATE_GAME_CHANNELNAME + ((GameData)result.Data).id, eventName: "game_join", data: result.Data);
             }
 
             return result.ResultFunc(result.Data);
@@ -102,10 +120,42 @@ namespace Domotica_API.Controllers
             if (result.ResultFunc == this.Ok)
             {
                 PusherServer.Pusher pusher = Pusher.Pusher.Create();
-                pusher.TriggerAsync(channelName: "game_" + ((GameData)result.Data).id, eventName: "create_move", data: result.Data);
+                pusher.TriggerAsync(channelName: this.PRIVATE_GAME_CHANNELNAME + ((GameData)result.Data).id, eventName: "create_move", data: result.Data);
             }
 
             return result.ResultFunc(result.Data);
+        }
+        #endregion
+
+        #region "Pusher endpoints"
+        [HttpPost("user/pusher")]
+        public IActionResult GetUserChannel([FromBody] Validators.PusherUser pusherUser)
+        {
+            if (ModelState.IsValid == false)
+            {
+                return BadRequest("Incorrect post data");
+            }
+
+            User user = (User)HttpContext.Items["user"];
+            string channel_name = this.PRIVATE_USER_CHANNELNAME + user.id.ToString();
+            var auth = Pusher.Pusher.Create().Authenticate(channel_name, pusherUser.socket_id);
+       
+            return Ok(auth);
+        }
+
+        [HttpPost("pusher")]
+        public IActionResult GetGameChannel([FromBody] Validators.PusherUserGame pusherUser)
+        {
+            if (ModelState.IsValid == false)
+            {
+                return BadRequest("Incorrect post data");
+            }
+
+            User user = (User)HttpContext.Items["user"];
+            string channel_name = this.PRIVATE_GAME_CHANNELNAME + user.id.ToString();
+            var auth = Pusher.Pusher.Create().Authenticate(channel_name, pusherUser.socket_id);
+
+            return Ok(auth);
         }
         #endregion
 
