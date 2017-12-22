@@ -175,7 +175,7 @@ namespace Domotica_API.Controllers
 
 		    string extension = Path.GetExtension(file);
 
-		    return mimes[file];
+		    return mimes[extension];
 	    }
 
 	    private string GetMimeExtension(string mime)
