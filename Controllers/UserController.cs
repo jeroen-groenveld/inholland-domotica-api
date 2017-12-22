@@ -4,12 +4,16 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Net.Mime;
 using System.Security.Cryptography;
+using System.Threading;
+using System.Threading.Tasks;
 using Domotica_API.Middleware;
 using Domotica_API.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging.AzureAppServices.Internal;
 using SendGrid;
 using SendGrid.Helpers.Mail;
@@ -84,7 +88,79 @@ namespace Domotica_API.Controllers
             return Ok(user);
         }
 
-        [HttpGet("background")]
+	    [HttpPost("profile/image")]
+	    [MiddlewareFilter(typeof(TokenAuthorize))]
+		public async Task<IActionResult> Post(IFormFile file)
+	    {
+		    if (file == null || file.Length == 0)
+		    {
+			    return BadRequest("No file found.");
+			}
+
+			//Only jpg and png.
+		    if (file.ContentType != "image/jpeg" && file.ContentType != "image/png")
+		    {
+			    return BadRequest("Only PNG and JPG are permitted.");
+		    }
+
+			//Max 2mb filesize.
+		    if (file.Length > 2097152)
+		    {
+			    return BadRequest("Only files smaller than 2MB are permitted.");
+		    }
+
+			//Extension can either be jpg or png.
+		    string extension = (file.ContentType == "image/jpeg") ? "jpg" : "png";
+		    string filename = "profile-image." + extension;
+
+			User user = (User)HttpContext.Items["user"];
+			string user_path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "/profiles/" + user.id;
+
+			//check if directory exists, if not create it.
+			if (Directory.Exists(user_path) == false)
+			{
+				Directory.CreateDirectory(user_path);
+			}
+
+		    var file_path = Path.Combine(user_path, filename);
+
+		    using (var stream = new FileStream(file_path, FileMode.Create))
+		    {
+			    await file.CopyToAsync(stream);
+		    }
+
+		    user.image = filename;
+		    this.db.SaveChanges();
+
+			return Ok("File uploaded.");
+	    }
+
+	    [HttpGet("profile/image")]
+	    [MiddlewareFilter(typeof(TokenAuthorize))]
+		public IActionResult GetProfileImage()
+	    {
+		    User user = (User)HttpContext.Items["user"];
+
+		    string user_profile_image = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "/profiles/" + user.id + "/" + user.image;
+
+		    if (System.IO.File.Exists(user_profile_image) == false)
+		    {
+			    if (string.IsNullOrEmpty(user.image) == false)
+			    {
+				    user.image = null;
+				    this.db.SaveChanges();
+			    }
+			    return BadRequest("No profile image found.");
+		    }
+
+		    Console.WriteLine(System.IO.Path.GetExtension(user_profile_image));
+		    string mime = (System.IO.Path.GetExtension(user_profile_image) == ".jpg") ? "image/jpeg" : "image/png";
+
+			byte[] imageBytes = System.IO.File.ReadAllBytes(user_profile_image);
+		    return File(imageBytes, mime);
+	    }
+
+		[HttpGet("background")]
         [MiddlewareFilter(typeof(TokenAuthorize))]
         public IActionResult GetBackground()
         {
@@ -230,5 +306,5 @@ namespace Domotica_API.Controllers
 
             return new_hash;
         }
-    }
+	}
 }

@@ -25,7 +25,10 @@ namespace Domotica_API.Models
 
         public int background_id { get; set;}
 
-        [IgnoreDataMember]
+	    [IgnoreDataMember]
+	    public string image { get; set; }
+
+	    [IgnoreDataMember]
         [ForeignKey("background_id")]
         public virtual Background background { get; set; }
 

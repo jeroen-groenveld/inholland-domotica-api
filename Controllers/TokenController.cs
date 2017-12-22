@@ -22,7 +22,7 @@ namespace Domotica_API.Controllers
         {
             if(ModelState.IsValid == false)
             {
-                return BadRequest("Incorrect post url.");
+                return BadRequest("Incorrect post data.");
             }
 
             User user = UserController.Authenticate(userLogin);
@@ -40,7 +40,7 @@ namespace Domotica_API.Controllers
             //Check post url.
             if (ModelState.IsValid == false)
             {
-                return BadRequest("Incorrect post url.");
+                return BadRequest("Incorrect post data.");
             }
 
             //Check token length.
