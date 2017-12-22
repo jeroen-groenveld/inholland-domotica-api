@@ -12,6 +12,8 @@ namespace Domotica_API.Schedules
 
             //Do task hourly.
             RecurringJob.AddOrUpdate(() => new TokenCleaner().Run(), Cron.Hourly);
+           
+            RecurringJob.AddOrUpdate(() => new OnlineUsers().Run(), Cron.Minutely);
         }
     }
 }
