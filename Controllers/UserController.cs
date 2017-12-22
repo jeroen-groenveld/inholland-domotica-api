@@ -97,8 +97,10 @@ namespace Domotica_API.Controllers
 			    return BadRequest("No file found.");
 			}
 
+		    string[] allowedTypes = new string[] { "image/jpeg", "image/png" };
+
 			//Only jpg and png.
-		    if (file.ContentType != "image/jpeg" && file.ContentType != "image/png")
+		    if (allowedTypes.Contains(file.ContentType) == false)
 		    {
 			    return BadRequest("Only PNG and JPG are permitted.");
 		    }
@@ -110,11 +112,11 @@ namespace Domotica_API.Controllers
 		    }
 
 			//Extension can either be jpg or png.
-		    string extension = (file.ContentType == "image/jpeg") ? "jpg" : "png";
-		    string filename = "profile-image." + extension;
+		    string filename = "profile-image." + this.GetMimeExtension(file.ContentType);
 
 			User user = (User)HttpContext.Items["user"];
 			string user_path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "/profiles/" + user.id;
+		    var file_path = Path.Combine(user_path, filename);
 
 			//check if directory exists, if not create it.
 			if (Directory.Exists(user_path) == false)
@@ -122,13 +124,19 @@ namespace Domotica_API.Controllers
 				Directory.CreateDirectory(user_path);
 			}
 
-		    var file_path = Path.Combine(user_path, filename);
+			//Remove old image.
+		    if (user.image != null)
+		    {
+				System.IO.File.Delete(Path.Combine(user_path, user.image));
+		    }
 
+			//write new image to disk.
 		    using (var stream = new FileStream(file_path, FileMode.Create))
 		    {
 			    await file.CopyToAsync(stream);
 		    }
 
+			//save new image to the DB.
 		    user.image = filename;
 		    this.db.SaveChanges();
 
@@ -153,12 +161,33 @@ namespace Domotica_API.Controllers
 			    return BadRequest("No profile image found.");
 		    }
 
-		    Console.WriteLine(System.IO.Path.GetExtension(user_profile_image));
-		    string mime = (System.IO.Path.GetExtension(user_profile_image) == ".jpg") ? "image/jpeg" : "image/png";
-
 			byte[] imageBytes = System.IO.File.ReadAllBytes(user_profile_image);
-		    return File(imageBytes, mime);
+		    return File(imageBytes, this.GetFileMime(user.image));
 	    }
+
+	    private string GetFileMime(string file)
+	    {
+		    Dictionary<string, string> mimes = new Dictionary<string, string>
+		    {
+			    {".jpg", "image/jpeg"},
+			    {".png", "image/png"}
+		    };
+
+		    string extension = Path.GetExtension(file);
+
+		    return mimes[file];
+	    }
+
+	    private string GetMimeExtension(string mime)
+	    {
+		    Dictionary<string, string> extensions = new Dictionary<string, string>
+		    {
+			    {"image/jpeg", ".jpg"},
+			    {"image/png", ".png"}
+		    };
+
+		    return extensions[mime];
+		}
 
 		[HttpGet("background")]
         [MiddlewareFilter(typeof(TokenAuthorize))]

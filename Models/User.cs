@@ -25,7 +25,6 @@ namespace Domotica_API.Models
 
         public int background_id { get; set;}
 
-	    [IgnoreDataMember]
 	    public string image { get; set; }
 
 	    [IgnoreDataMember]

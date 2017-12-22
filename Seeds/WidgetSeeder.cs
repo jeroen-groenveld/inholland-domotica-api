@@ -59,7 +59,37 @@ namespace Domotica_API.Seeds
                 });
             }
 
-            await db.SaveChangesAsync();
+	        if (db.Widgets.SingleOrDefault(x => x.id == 6) == null)
+	        {
+		        db.Add(new Widget
+		        {
+			        name = "Scoreboard",
+			        component_name = "scoreboard",
+			        description = "Scoreboard for Tic Tac Toe."
+		        });
+	        }
+
+	        if (db.Widgets.SingleOrDefault(x => x.id == 7) == null)
+	        {
+		        db.Add(new Widget
+		        {
+			        name = "Tic Tac Toe",
+			        component_name = "tic-tac-toe",
+			        description = "Tic Tac Toe game."
+		        });
+			}
+
+			if (db.Widgets.SingleOrDefault(x => x.id == 8) == null)
+			{
+				db.Add(new Widget
+				{
+					name = "Bookmark",
+					component_name = "bookmark",
+					description = "Bookmarks that point to an url."
+				});
+			}
+
+			await db.SaveChangesAsync();
         }
     }
 }
