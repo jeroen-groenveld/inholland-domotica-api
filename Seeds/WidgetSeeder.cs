@@ -83,8 +83,8 @@ namespace Domotica_API.Seeds
 			{
 				db.Add(new Widget
 				{
-					name = "Bookmark",
-					component_name = "bookmark",
+					name = "Bookmarks",
+					component_name = "bookmarks",
 					description = "Bookmarks that point to an url."
 				});
 			}
