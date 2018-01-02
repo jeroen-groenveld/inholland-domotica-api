@@ -38,5 +38,6 @@ namespace Domotica_API.Models
 		public const int waiting_invite = 1;
 		public const int started = 2;
 		public const int finished = 3;
+	    public const int canceled = 4;
 	}
 }

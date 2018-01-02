@@ -23,9 +23,9 @@ namespace Domotica_API.Models
         [MaxLength(60)]
         public string name { get; set; }
 
-        public int background_id { get; set;}
+        public string image { get; set; }
 
-	    public string image { get; set; }
+        public int background_id { get; set;}
 
 	    [IgnoreDataMember]
         [ForeignKey("background_id")]

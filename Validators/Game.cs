@@ -12,7 +12,7 @@ namespace Domotica_API.Validators
         public string player2_email { get; set; }
     }
 
-	public class GameJoin
+	public class Game
 	{
 		[Required]
 		public int id { get; set; }

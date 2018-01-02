@@ -112,7 +112,7 @@ namespace Domotica_API.Controllers
         }
 
         [HttpPut("join")]
-        public IActionResult UpdateJoinGame([FromBody] Validators.GameJoin gameJoin)
+        public IActionResult UpdateJoinGame([FromBody] Validators.Game gameJoin)
         {
             Result result = this.JoinGame(gameJoin);
 
@@ -120,6 +120,20 @@ namespace Domotica_API.Controllers
             {
                 PusherServer.Pusher pusher = Pusher.Pusher.Create();
                 pusher.TriggerAsync(channelName: this.PRIVATE_GAME_CHANNELNAME + ((GameData)result.Data).id, eventName: "game_join", data: result.Data);
+            }
+
+            return result.ResultFunc(result.Data);
+        }
+
+        [HttpPut("leave")]
+        public IActionResult UpdateLeaveGame([FromBody] Validators.Game GameLeave)
+        {
+            Result result = this.LeaveGame(GameLeave);
+
+            if (result.ResultFunc == this.Ok)
+            {
+                PusherServer.Pusher pusher = Pusher.Pusher.Create();
+                pusher.TriggerAsync(channelName: this.PRIVATE_GAME_CHANNELNAME + ((GameData) result.Data).id, eventName: "game_leave", data: result.Data);
             }
 
             return result.ResultFunc(result.Data);
@@ -325,7 +339,7 @@ namespace Domotica_API.Controllers
             return new Result { ResultFunc = this.Ok, Data = this.FilterGameResults(game) };
         }
 
-        public Result JoinGame(Validators.GameJoin gameJoin)
+        public Result JoinGame(Validators.Game gameJoin)
         {
             if (ModelState.IsValid == false)
             {
@@ -373,6 +387,41 @@ namespace Domotica_API.Controllers
             return new Result { ResultFunc = this.BadRequest, Data = "Can't join game. Game is either finished or started." };
         }
 
+        public Result LeaveGame(Validators.Game gameLeave)
+        {
+            if (ModelState.IsValid == false)
+            {
+                return new Result { ResultFunc = this.BadRequest, Data = "Incorrect post data" };
+            }
+
+            User user = (User)HttpContext.Items["user"];
+            Game game = this.db.Games.Where(x => x.id == gameLeave.id).Include(x => x.User1).FirstOrDefault();
+
+            //Check if game exists.
+            if (game == null)
+            {
+                return new Result { ResultFunc = this.BadRequest, Data = "Game does not exist." };
+            }
+
+            //Chekc if the user is playing in this game.
+            if (game.User1 != user && game.User2 != user)
+            {
+                return new Result { ResultFunc = this.BadRequest, Data = "This is not your game." };
+            }
+
+            //check if the game has finished
+            if (game.status == GameStatus.finished)
+            {
+                return new Result { ResultFunc = this.BadRequest, Data = "This game has finished." };
+            }
+
+            game.status = GameStatus.canceled;
+            game.finished_at = DateTime.Now;
+            this.db.SaveChanges();
+
+            return new Result { ResultFunc = this.Ok, Data = this.FilterGameResults(game) };
+        }
+
         public Result CreateMove(Validators.Move move)
         {
             if (ModelState.IsValid == false)
@@ -403,8 +452,9 @@ namespace Domotica_API.Controllers
                     case GameStatus.waiting_join:
                         return new Result { ResultFunc = this.BadRequest, Data = "This game hasn't started yet." };
 
+                    case GameStatus.canceled:
                     case GameStatus.finished:
-                        return new Result { ResultFunc = this.BadRequest, Data = "This game has been finished." };
+                        return new Result { ResultFunc = this.BadRequest, Data = "This game has finished." };
                 }
             }
 
