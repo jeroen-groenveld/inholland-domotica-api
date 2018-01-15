@@ -34,6 +34,7 @@ namespace Domotica_API.Controllers
             object result = new
             {
                 invites = UserInvites(),
+                waiting = UserGamesWaiting(),
                 started = UserGamesStarted(),
                 lobby_list = GameLobbyList(),
                 finished = UserGamesFinished(),
@@ -73,6 +74,12 @@ namespace Domotica_API.Controllers
         public IActionResult GetUserGamesFinished()
         {
             return Ok(UserGamesFinished());
+        }
+
+        [HttpGet("user/waiting")]
+        public IActionResult GetUserGamesWaiting()
+        {
+            return Ok(UserGamesWaiting());
         }
 
         [HttpGet("highscore")]
@@ -165,24 +172,57 @@ namespace Domotica_API.Controllers
 
             User user = (User)HttpContext.Items["user"];
             string channel_name = this.PRIVATE_USER_CHANNELNAME + user.id.ToString();
-            var auth = Pusher.Pusher.Create().Authenticate(channel_name, pusherUser.socket_id);
-       
-            return Ok(auth);
+
+            //Catch the errors(When the socket_id is in the wrong format a error is thrown).
+            IAuthenticationData auth;
+            try
+            {
+                auth = Pusher.Pusher.Create().Authenticate(channel_name, pusherUser.socket_id);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message.ToString());
+            }
+
+            return Ok(auth.ToJson());
         }
 
         [HttpPost("pusher")]
-        public IActionResult GetGameChannel([FromBody] Validators.PusherUserGame pusherUser)
+        public IActionResult GetGameChannel([FromBody] Validators.PusherUserGame pusherUserGame)
         {
             if (ModelState.IsValid == false)
             {
                 return BadRequest("Incorrect post data");
             }
 
-            User user = (User)HttpContext.Items["user"];
-            string channel_name = this.PRIVATE_GAME_CHANNELNAME + user.id.ToString();
-            var auth = Pusher.Pusher.Create().Authenticate(channel_name, pusherUser.socket_id);
+            //check if game exists
+            Game game = this.db.Games.SingleOrDefault(x => x.id == pusherUserGame.game_id);
+            if(game == null)
+            {
+                return BadRequest("Game does not exist.");
+            }
 
-            return Ok(auth);
+            //Check if the user is a player of this game.
+            User user = (User)HttpContext.Items["user"];
+            if (game.User1 != user && game.User2 != user)
+            {
+                return Unauthorized();
+            }
+
+            string channel_name = this.PRIVATE_GAME_CHANNELNAME + game.id.ToString();
+
+            //Catch the errors(When the socket_id is in the wrong format a error is thrown).
+            IAuthenticationData auth;
+            try
+            {
+                auth = Pusher.Pusher.Create().Authenticate(channel_name, pusherUserGame.socket_id);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message.ToString());
+            }
+
+            return Ok(auth.ToJson());
         }
         #endregion
 
@@ -551,6 +591,14 @@ namespace Domotica_API.Controllers
         {
             User user = (User)HttpContext.Items["user"];
             List<Game> games = this.db.Games.Where(x => (x.User1 == user || x.User2 == user) && x.status == GameStatus.finished).Include(x => x.User1).Include(x => x.User2).Include(x => x.Moves).Include(x => x.UserWinner).ToList();
+
+            return FilterGameResults(games);
+        }
+
+        private List<GameData> UserGamesWaiting()
+        {
+            User user = (User)HttpContext.Items["user"];
+            List<Game> games = this.db.Games.Where(x => x.User1 == user && (x.status == GameStatus.waiting_invite || x.status == GameStatus.waiting_join)).Include(x => x.User1).Include(x => x.User2).ToList();
 
             return FilterGameResults(games);
         }
