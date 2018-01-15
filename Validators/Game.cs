@@ -10,12 +10,18 @@ namespace Domotica_API.Validators
     {
         [MaxLength(60)]
         public string player2_email { get; set; }
+
+        [Required]
+        public string socket_id { get; set; }
     }
 
 	public class Game
 	{
 		[Required]
 		public int id { get; set; }
+
+        [Required]
+        public string socket_id { get; set; }
 	}
 
 	public class Move
@@ -26,5 +32,8 @@ namespace Domotica_API.Validators
 		[Required]
 		[Range(0, 8)]
 		public int position { get; set; }
+
+        [Required]
+        public string socket_id { get; set; }
 	}
 }

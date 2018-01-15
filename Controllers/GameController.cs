@@ -111,7 +111,7 @@ namespace Domotica_API.Controllers
                 }
                 else
                 {
-                    pusher.TriggerAsync(channelName: this.PUBLIC_GAME_CHANNEL, eventName: "game_created", data: result.Data);
+                    pusher.TriggerAsync(channelName: this.PUBLIC_GAME_CHANNEL, eventName: "game_created", data: result.Data, options: new TriggerOptions() { SocketId = gameCreate.socket_id });
                 }
             }
 
@@ -126,7 +126,7 @@ namespace Domotica_API.Controllers
             if (result.ResultFunc == this.Ok)
             {
                 PusherServer.Pusher pusher = Pusher.Pusher.Create();
-                pusher.TriggerAsync(channelName: this.PRIVATE_GAME_CHANNELNAME + ((GameData)result.Data).id, eventName: "game_join", data: result.Data);
+                pusher.TriggerAsync(channelName: this.PRIVATE_GAME_CHANNELNAME + ((GameData)result.Data).id, eventName: "game_join", data: result.Data, options: new TriggerOptions() { SocketId = gameJoin.socket_id });
             }
 
             return result.ResultFunc(result.Data);
@@ -140,7 +140,7 @@ namespace Domotica_API.Controllers
             if (result.ResultFunc == this.Ok)
             {
                 PusherServer.Pusher pusher = Pusher.Pusher.Create();
-                pusher.TriggerAsync(channelName: this.PRIVATE_GAME_CHANNELNAME + ((GameData) result.Data).id, eventName: "game_leave", data: result.Data);
+                pusher.TriggerAsync(channelName: this.PRIVATE_GAME_CHANNELNAME + ((GameData) result.Data).id, eventName: "game_leave", data: result.Data, options: new TriggerOptions() { SocketId = GameLeave.socket_id });
             }
 
             return result.ResultFunc(result.Data);
@@ -154,7 +154,7 @@ namespace Domotica_API.Controllers
             if (result.ResultFunc == this.Ok)
             {
                 PusherServer.Pusher pusher = Pusher.Pusher.Create();
-                pusher.TriggerAsync(channelName: this.PRIVATE_GAME_CHANNELNAME + ((GameData)result.Data).id, eventName: "create_move", data: result.Data);
+                pusher.TriggerAsync(channelName: this.PRIVATE_GAME_CHANNELNAME + ((GameData)result.Data).id, eventName: "create_move", data: result.Data, options: new TriggerOptions() { SocketId = move.socket_id });
             }
 
             return result.ResultFunc(result.Data);
