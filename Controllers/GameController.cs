@@ -249,7 +249,7 @@ namespace Domotica_API.Controllers
 
         private bool CheckMovesForWin(List<Move> moves)
         {
-            bool[] grid = new bool[8];
+            bool[] grid = new bool[9];
             foreach (Move move in moves)
             {
                 grid[move.position] = true;
