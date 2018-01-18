@@ -10,6 +10,7 @@ namespace Domotica_API.Controllers.Pusher
     {
         public static PusherServer.Pusher Create()
         {
+            //Creates a new instance of the Pusher Object.
             return new PusherServer.Pusher(
                 env.PUSHER_APPID,
                 env.PUSHER_KEY,

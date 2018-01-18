@@ -9,10 +9,8 @@ namespace Domotica_API.Config
     {
 		public const string API_ROOT_PATH = "v1";
 
-		public const int API_ACCESS_TOKEN_EXPIRE = 1000;
-		public const int API_REFRESH_TOKEN_EXPIRE = 3000;
-
-        public const int GRID_SIZE_HEIGHT = 12;
-        public const int GRID_SIZE_WIDTH = 12;
+        //Value is given in Minutes.
+		public const int API_ACCESS_TOKEN_EXPIRE = 5;
+		public const int API_REFRESH_TOKEN_EXPIRE = 30;
     }
 }

@@ -88,81 +88,82 @@ namespace Domotica_API.Controllers
             return Ok(user);
         }
 
-	    [HttpPost("profile/image")]
+        [HttpGet("profile/image")]
+        [MiddlewareFilter(typeof(TokenAuthorize))]
+        public IActionResult GetProfileImage()
+        {
+            User user = (User)HttpContext.Items["user"];
+
+            string user_profile_image = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "/profiles/" + user.id + "/" + user.image;
+
+            if (System.IO.File.Exists(user_profile_image) == false)
+            {
+                if (string.IsNullOrEmpty(user.image) == false)
+                {
+                    user.image = null;
+                    this.db.SaveChanges();
+                }
+                return BadRequest("No profile image found.");
+            }
+
+            byte[] imageBytes = System.IO.File.ReadAllBytes(user_profile_image);
+            return File(imageBytes, this.GetFileMime(user.image));
+        }
+
+        [HttpPost("profile/image")]
 	    [MiddlewareFilter(typeof(TokenAuthorize))]
 		public async Task<IActionResult> Post(IFormFile file)
 	    {
+            //Check if the request contains a file.
 		    if (file == null || file.Length == 0)
 		    {
 			    return BadRequest("No file found.");
 			}
 
+
 		    string[] allowedTypes = new string[] { "image/jpeg", "image/png" };
 
-			//Only jpg and png.
+			//Check the contentype of the file, can either be JPEG or PNG.
 		    if (allowedTypes.Contains(file.ContentType) == false)
 		    {
 			    return BadRequest("Only PNG and JPG are permitted.");
 		    }
 
-			//Max 2mb filesize.
+			//Max 2Mb file size.
 		    if (file.Length > 2097152)
 		    {
 			    return BadRequest("Only files smaller than 2MB are permitted.");
 		    }
 
-			//Extension can either be jpg or png.
 		    string filename = "profile-image." + this.GetMimeExtension(file.ContentType);
 
 			User user = (User)HttpContext.Items["user"];
 			string user_path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "/profiles/" + user.id;
 		    var file_path = Path.Combine(user_path, filename);
 
-			//check if directory exists, if not create it.
+			//Check if the user folder exists, if not create it.
 			if (Directory.Exists(user_path) == false)
 			{
 				Directory.CreateDirectory(user_path);
 			}
 
-			//Remove old image.
+			//If the user already has an image. Delete the old one.
 		    if (user.image != null)
 		    {
 				System.IO.File.Delete(Path.Combine(user_path, user.image));
 		    }
 
-			//write new image to disk.
+			//Write new image to disk.
 		    using (var stream = new FileStream(file_path, FileMode.Create))
 		    {
 			    await file.CopyToAsync(stream);
 		    }
 
-			//save new image to the DB.
+			//Save new image to the DB.
 		    user.image = filename;
 		    this.db.SaveChanges();
 
 			return Ok("File uploaded.");
-	    }
-
-	    [HttpGet("profile/image")]
-	    [MiddlewareFilter(typeof(TokenAuthorize))]
-		public IActionResult GetProfileImage()
-	    {
-		    User user = (User)HttpContext.Items["user"];
-
-		    string user_profile_image = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "/profiles/" + user.id + "/" + user.image;
-
-		    if (System.IO.File.Exists(user_profile_image) == false)
-		    {
-			    if (string.IsNullOrEmpty(user.image) == false)
-			    {
-				    user.image = null;
-				    this.db.SaveChanges();
-			    }
-			    return BadRequest("No profile image found.");
-		    }
-
-			byte[] imageBytes = System.IO.File.ReadAllBytes(user_profile_image);
-		    return File(imageBytes, this.GetFileMime(user.image));
 	    }
 
 	    private string GetFileMime(string file)
@@ -212,17 +213,19 @@ namespace Domotica_API.Controllers
         [HttpPost("register")]
 		public IActionResult Register([FromBody] Validators.User.UserRegister userRegister)
 		{
+            //Check post data.
             if(ModelState.IsValid == false)
             {
                 return BadRequest("Incorrect post data.");
             }
 
+            //Check if a user is already registrated with this e-mail.
             if (this.db.Users.SingleOrDefault(x => x.email == userRegister.email) != null)
 			{
 				return BadRequest("This e-mail is already in use.");
 			}
 
-			//Hash the password.
+			//Hash the password and convert it to a Base64 string.
 			string pass_hash = Convert.ToBase64String(HashPassword(userRegister.password));
 
             //Create new user instance.
@@ -258,6 +261,8 @@ namespace Domotica_API.Controllers
             msg.PlainTextContent = "Hi " + user.name + ". Thanks for registering!";
 
             var transport = new SendGridClient(env.SENDGRID_API_KEY);
+
+            //Send the message Async so the request doesn't wait untill the e-mail is sent.
             transport.SendEmailAsync(msg);
         }
 
@@ -276,6 +281,7 @@ namespace Domotica_API.Controllers
                 //Validate the given password against the user password.
                 if (ValidatePassword(userLogin.password, user.password))
                 {
+                    //If passwords match then return the user.
                     return user;
                 }
                 return null;
@@ -284,17 +290,18 @@ namespace Domotica_API.Controllers
 
         public static bool ValidatePassword(string givenPassword, string databasePasswordHash)
 		{
-			//Retrieve password hash and salt from databae password.
-			byte[] db_pass_hash = Convert.FromBase64String(databasePasswordHash);
-            byte[] db_pass_hash_hash = db_pass_hash.Take(Config.Hash.PASSWORD_HASH_SIZE / 8).ToArray();
-            byte[] db_pass_hash_salt = db_pass_hash.Skip(Config.Hash.PASSWORD_HASH_SIZE / 8).ToArray();
+			//Convert the Password & Salt Base64 hash to a byte array.
+			byte[] db_passhash_with_salt = Convert.FromBase64String(databasePasswordHash);
+            //Take the Salt from the byte array.
+            byte[] db_salt = db_passhash_with_salt.Skip(Config.Hash.PASSWORD_HASH_SIZE / 8).ToArray();
 
 
-            //Hash the given password and with the salt from the database.
-            byte[] given_pass_hash = HashPassword(givenPassword, db_pass_hash_salt);
+            //Hash the given password with the salt from the database.
+            byte[] given_passhash_with_salt = HashPassword(givenPassword, db_salt);
 
-            //Check if the bytes of the hashes are equal.
-            if (db_pass_hash.SequenceEqual(given_pass_hash))
+
+            //Check if the Database Hash is equal to the Given Password Hash.
+            if (db_passhash_with_salt.SequenceEqual(given_passhash_with_salt))
             {
                 return true;
             }
@@ -323,15 +330,8 @@ namespace Domotica_API.Controllers
                 iterationCount: Config.Hash.PASSWORD_HASH_ITERATIONS,
                 numBytesRequested: Config.Hash.PASSWORD_HASH_SIZE / 8);
 
-            //Concatenate hash and salt.
+            //Concatenate the salt after the hash.
             byte[] new_hash = hash.Concat(salt).ToArray();
-
-
-            //Console.WriteLine("salt: " + Convert.ToBase64String(salt));
-            //Console.WriteLine("hash: " + Convert.ToBase64String(hash));
-            //Console.WriteLine("new hash length: " + new_hash.Length.ToString());
-            //Console.WriteLine("Should be hash: " + Convert.ToBase64String(new_hash.Take(512 / 8).ToArray()));
-            //Console.WriteLine("Should be salt: " + Convert.ToBase64String(new_hash.Skip(512 / 8).ToArray()));
 
             return new_hash;
         }

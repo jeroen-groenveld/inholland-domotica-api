@@ -17,87 +17,130 @@ namespace Domotica_API.Controllers
         //Constructor
         public TokenController(DatabaseContext db) : base(db) { }
 
+        //End-Point for gaining a new Access Token and Refresh Token. Validation is done by the given User Credentials.
         [HttpPost("authorize")]
-        public IActionResult Authorize([FromBody] Validators.User.UserLogin userLogin)
+        public IActionResult Authorize([FromBody] Validators.User.UserLogin RequestData)
         {
+            //Check post data.
             if(ModelState.IsValid == false)
             {
                 return BadRequest("Incorrect post data.");
             }
 
-            User user = UserController.Authenticate(userLogin);
+            //Get autheneticated user.
+            User user = UserController.Authenticate(RequestData);
             if(user == null)
             {
                 return BadRequest("Incorrect credentials.");
             }
 
+            //Before generating new tokens for this user, delete all existing tokens.
+            this.DeleteAccessTokensForUser(user);
+
+            //Generate tokens for this user.
             return this.GenerateTokens(user);
         }
 
+        //This End-Point is used for gaining a new Access Token and Refresh Token. Validation is done by the given Refresh Token.
         [HttpPost("token/refresh")]
-        public IActionResult RefreshAccessToken([FromBody] Validators.RefreshToken refreshToken)
+        public IActionResult RefreshAccessToken([FromBody] Validators.RefreshToken RequestData)
         {
-            //Check post url.
+            //Check post data.
             if (ModelState.IsValid == false)
             {
                 return BadRequest("Incorrect post data.");
             }
 
             //Check token length.
-            if (refreshToken.token.Length != 88)
+            if (RequestData.token.Length != 88)
             {
                 return BadRequest("Token length is invalid.");
             }
 
-            //Check if the refresh token exists in the database.
-            AccessToken accessToken = this.db.AccessTokens.Where(x => x.token == refreshToken.token && x.refresh_token != null).Include(x => x.refresh_token).Include(x => x.user).FirstOrDefault();
-            if (accessToken == null)
+            //Check if the given RefreshToken exists in the database.
+            AccessToken RefreshToken = this.db.AccessTokens.Where(x => x.token == RequestData.token && x.refresh_token != null).Include(x => x.refresh_token).Include(x => x.user).FirstOrDefault();
+            if (RefreshToken == null)
             {
                 return BadRequest("Token not found.");
             }
 
-            //Remove old tokens for this user.
-            //Retrieve all refresh tokens that belong to this user.
-            List<RefreshToken> oldRefreshTokens = this.db.RefreshTokens.Where(x => x.access_token.user_id == accessToken.user_id).Include(x => x.access_token).ToList();
-            //Delete them from the database.
-            this.db.RemoveRange(oldRefreshTokens);
-
-            //Retrieve all access tokens that belong to this user.
-            List<AccessToken> oldAccessTokens = this.db.AccessTokens.Where(x => x.user_id == accessToken.user_id).ToList();
-            //Delete them from the database.
-            this.db.RemoveRange(oldAccessTokens);
-
-            //Save the changes.
-            this.db.SaveChanges();
-
-
             //Check if the refresh token has expired.
-            if (accessToken.expires_at < DateTime.Now)
+            if (RefreshToken.expires_at < DateTime.Now)
             {
+                //Delete the expired tokens.
+                this.DeleteExpiredAccessTokensForUser(RefreshToken.user);
+
                 return BadRequest("Token expired.");
             }
 
+            //Before generating new tokens for this user, delete all existing tokens.
+            this.DeleteAccessTokensForUser(RefreshToken.user);
+
             //Generate new tokens.
-            return this.GenerateTokens(accessToken.user);
+            return this.GenerateTokens(RefreshToken.user);
+        }
+
+        private void DeleteExpiredAccessTokensForUser(User user)
+        {
+            //Retrieve all refresh tokens that belong to this user and are expired.
+            List<RefreshToken> RefreshTokens = this.db.RefreshTokens.Where(x => x.access_token.user_id == user.id && x.access_token.expires_at < DateTime.Now).Include(x => x.access_token).ToList();
+
+            //Retrieve all access tokens that belong to this user and are expired.
+            List<AccessToken> AccessTokens = this.db.AccessTokens.Where(x => x.user_id == user.id && x.expires_at < DateTime.Now).ToList();
+
+            //Delete them from the database.
+            this.DeleteTokens(RefreshTokens, AccessTokens);
+        }
+
+        private void DeleteAccessTokensForUser(User user)
+        {
+            //Retrieve all refresh tokens that belong to this user.
+            List<RefreshToken> RefreshTokens = this.db.RefreshTokens.Where(x => x.access_token.user_id == user.id).Include(x => x.access_token).ToList();
+
+            //Retrieve all access tokens that belong to this user.
+            List<AccessToken> AccessTokens = this.db.AccessTokens.Where(x => x.user_id == user.id).ToList();
+
+            //Delete them from the database.
+            this.DeleteTokens(RefreshTokens, AccessTokens);
+        }
+
+        private void DeleteTokens(List<RefreshToken> RefreshTokens, List<AccessToken> AccessTokens)
+        {
+            bool no_tokens = true;
+            if(RefreshTokens.Count > 0)
+            {
+                this.db.RemoveRange(RefreshTokens);
+                no_tokens = false;
+            }
+            if(AccessTokens.Count > 0)
+            {
+                this.db.RemoveRange(AccessTokens);
+                no_tokens = false;
+            }
+
+            if(no_tokens == false)
+            {
+                this.db.SaveChanges();
+            }
         }
 
         private IActionResult GenerateTokens(User user)
         {
-            AccessToken accessToken = this.GenerateToken(user);
-            AccessToken refreshAccessToken = this.GenerateToken(user, false);
+            AccessToken AccessToken = this.GenerateToken(user);
+            AccessToken RefreshAccessToken = this.GenerateToken(user, false);
 
             //Create refresh token model
-            RefreshToken refreshToken = new RefreshToken()
+            RefreshToken RefreshToken = new RefreshToken()
             {
-                access_token = refreshAccessToken,
+                access_token = RefreshAccessToken,
             };
 
             //Save access & refresh token to the database.
-            this.db.Add(accessToken);
-            this.db.Add(refreshAccessToken);
+            this.db.Add(AccessToken);
+            this.db.Add(RefreshAccessToken);
 
             //Save the refresh token to the database that links to the refreshAccessToken(Which is of type AccessToken)
-            this.db.Add(refreshToken);
+            this.db.Add(RefreshToken);
 
             //Save changes to the database.
             this.db.SaveChanges();
@@ -105,10 +148,10 @@ namespace Domotica_API.Controllers
             //Return an array that contains the tokens and their expire date.
             object result = new
             {
-                access_token = accessToken.token,
-                access_token_expire = accessToken.expires_at.ToString("MM-dd-yyyy HH:mm:ss"),
-                refresh_token = refreshAccessToken.token,
-                refresh_token_expire = refreshAccessToken.expires_at.ToString("MM-dd-yyyy HH:mm:ss"),
+                access_token = AccessToken.token,
+                access_token_expire = AccessToken.expires_at.ToString("MM-dd-yyyy HH:mm:ss"),
+                refresh_token = RefreshAccessToken.token,
+                refresh_token_expire = RefreshAccessToken.expires_at.ToString("MM-dd-yyyy HH:mm:ss"),
             };
 
             return Ok(result);
@@ -116,7 +159,7 @@ namespace Domotica_API.Controllers
 
         private AccessToken GenerateToken(User user, bool is_access_token = true)
         {
-            //Generate a rand unique string.
+            //Generate a random unique string. If users get the same token weird shit will happen.
             Random random = new Random();
             string uid = random.Next(0, 1000000) + DateTime.Now.ToString("MM-dd-yyyy HH.mm.ss.ffffff") + user.email;
             uid += (is_access_token) ? "" : "_refresh";

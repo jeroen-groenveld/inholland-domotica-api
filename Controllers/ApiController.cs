@@ -51,7 +51,5 @@ namespace Domotica_API.Controllers
 
             return res;
         }
-
-
     }
 }
