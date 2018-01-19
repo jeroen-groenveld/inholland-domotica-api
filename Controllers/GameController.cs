@@ -360,6 +360,16 @@ namespace Domotica_API.Controllers
 
             int status = (user_2 == null) ? GameStatus.waiting_join : GameStatus.waiting_invite;
 
+            //Check if the user already has an active lobby.
+            if(status == GameStatus.waiting_join)
+            {
+                List<Game> lobbies = this.db.Games.Where(x => x.User1 == user && x.status == GameStatus.waiting_join).ToList();
+                if(lobbies.Count > 0)
+                {
+                    return new Result { ResultFunc = this.BadRequest, Data = "You already have an active lobby." };
+                }
+            }
+
             //Check if the user is trying to invite himself.
             if (user == user_2)
             {
