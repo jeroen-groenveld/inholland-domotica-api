@@ -17,25 +17,21 @@ namespace Domotica_API.Seeds
             {
                 new Bookmark()
                 {
-                    name = "Google",
                     url = "https://www.google.nl",
                     user_id = 1
                 },
                 new Bookmark()
                 {
-                    name = "Dumpert",
                     url = "https://www.dumpert.nl",
                     user_id = 1
                 },
                 new Bookmark()
                 {
-                    name = "Tweakers",
                     url = "https://www.tweakers.nl",
                     user_id = 1
                 },
                 new Bookmark()
                 {
-                    name = "Nieuws Nu.nl",
                     url = "https://www.nu.nl",
                     user_id = 2
                 },

@@ -27,7 +27,7 @@ namespace Domotica_API.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] Validators.Bookmark newBookmark)
+        public IActionResult Create([FromBody] Validators.Bookmark bookmark)
         {
             if (ModelState.IsValid == false)
             {
@@ -35,7 +35,7 @@ namespace Domotica_API.Controllers
             }
 
             Regex urlRegex = new Regex(URL_REGEX);
-            if (urlRegex.IsMatch(newBookmark.url) == false)
+            if (urlRegex.IsMatch(bookmark.url) == false)
             {
                 return BadRequest("This url is not valid.");
             }
@@ -43,8 +43,7 @@ namespace Domotica_API.Controllers
             User user = (User)HttpContext.Items["user"];
             this.db.Add(new Bookmark
             {
-                name = newBookmark.name,
-                url = newBookmark.url,
+                url = bookmark.url,
                 user_id = user.id
             });
 

@@ -23,9 +23,6 @@ namespace Domotica_API.Models
         [ForeignKey("user_id")]
         public virtual User user { get; set; }
 
-        [MaxLength(60)]
-        public string name { get; set; }
-
         //Url max size 2083.
         [MaxLength(2083)]
         public string url { get; set; }

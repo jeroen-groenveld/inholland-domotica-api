@@ -70,7 +70,7 @@ namespace Domotica_API.Controllers
                 //Delete the expired tokens.
                 this.DeleteExpiredAccessTokensForUser(RefreshToken.user);
 
-                return BadRequest("Token expired.");
+                return BadRequest("Refresh token expired.");
             }
 
             //Before generating new tokens for this user, delete all existing tokens.
