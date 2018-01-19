@@ -26,6 +26,8 @@ namespace Domotica_API.Models
         [IgnoreDataMember]
         public List<User> Users;
 
+        //Url max size 2083.
+        [MaxLength(2083)]
         public string url { get; set; }
     }
 }
