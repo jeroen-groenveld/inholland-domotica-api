@@ -658,6 +658,7 @@ namespace Domotica_API.Controllers
             {
                 result.Add(FilterGameResults(game));
             }
+            result = result.OrderBy(x => x.created_at).ToList();
             return result;
         }
 
