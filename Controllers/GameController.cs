@@ -556,7 +556,9 @@ namespace Domotica_API.Controllers
         #region "Read functions"
         private List<object> Highscore()
         {
+            Dictionary<string, string> debug = new Dictionary<string, string>();
             List<Game> games = this.db.Games.Where(x => x.status == GameStatus.finished).ToList();
+            debug.Add("finnished_games_length", games.Count.ToString());
 
             Dictionary<User, int> scores = new Dictionary<User, int>();
             foreach (Game game in games)
@@ -566,19 +568,23 @@ namespace Domotica_API.Controllers
                     if (scores.ContainsKey(game.UserWinner) == false)
                     {
                         scores[game.UserWinner] = 0;
+                        debug.Add("user_score_" + game.UserWinner.name, "0");
                     }
                     scores[game.UserWinner]++;
                 }
             }
+            debug.Add("scores_length", scores.Count.ToString());
             var sorted = scores.OrderBy(x => x.Value).Take(3);
+            debug.Add("sorted_length", sorted.Count().ToString());
 
             List<object> result = new List<object>();
             foreach (KeyValuePair<User, int> user in sorted)
             {
-                 result.Add(this.UserStats(user.Key));
+                result.Add(this.UserStats(user.Key));
             }
+            debug.Add("results_length", result.Count.ToString());
 
-            return result;
+            return new List<object>() { new { debug = debug }, new { result = result }};
         }
 
         private List<GameData> UserInvites()
@@ -602,7 +608,7 @@ namespace Domotica_API.Controllers
             User user = (User)HttpContext.Items["user"];
             List<Game> games = this.db.Games.Where(x => (x.User1 == user || x.User2 == user) && x.status == GameStatus.finished).Include(x => x.User1).Include(x => x.User2).Include(x => x.Moves).Include(x => x.UserWinner).ToList();
 
-            return FilterGameResults(games);
+            return FilterGameResults(games, false);
         }
 
         private List<GameData> UserGamesWaiting()
@@ -661,19 +667,19 @@ namespace Domotica_API.Controllers
 
 
         #region "Functions that filter certain properties from the game Model"
-        private List<GameData> FilterGameResults(List<Game> games)
+        private List<GameData> FilterGameResults(List<Game> games, bool showMoves = true)
         {
             List<GameData> result = new List<GameData>();
             foreach (Game game in games)
             {
-                result.Add(FilterGameResults(game));
+                result.Add(FilterGameResults(game, showMoves));
             }
             result = result.OrderBy(x => x.created_at).ToList();
             result.Reverse();
             return result;
         }
 
-        private GameData FilterGameResults(Game game)
+        private GameData FilterGameResults(Game game, bool showMoves = true)
         {
             return new GameData
             {
@@ -693,7 +699,7 @@ namespace Domotica_API.Controllers
                     id = game.UserWinner?.id,
                     name = game.UserWinner?.name
                 },
-                moves = game.Moves,
+                moves = (showMoves) ? game.Moves : null,
                 status = game.status,
                 created_at = game.created_at,
                 finished_at = game.finished_at
