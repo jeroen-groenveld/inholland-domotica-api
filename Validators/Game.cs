@@ -9,7 +9,7 @@ namespace Domotica_API.Validators
     public class GameCreate
     {
         [MaxLength(60)]
-        public string player2_email { get; set; }
+        public string opponent_email { get; set; }
 
         [Required]
         public string socket_id { get; set; }

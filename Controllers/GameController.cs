@@ -351,9 +351,9 @@ namespace Domotica_API.Controllers
             }
 
             User user = (User)HttpContext.Items["user"];
-            User user_2 = this.db.Users.SingleOrDefault(x => x.email == gameCreate.player2_email);
+            User user_2 = this.db.Users.SingleOrDefault(x => x.email == gameCreate.opponent_email);
 
-            if (gameCreate.player2_email != null && user_2 == null)
+            if (gameCreate.opponent_email != null && user_2 == null)
             {
                 return new Result { ResultFunc = this.BadRequest, Data = "The user you're trying to invite does not exist." };
             }
