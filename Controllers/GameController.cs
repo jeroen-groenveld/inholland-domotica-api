@@ -557,7 +557,7 @@ namespace Domotica_API.Controllers
         private List<object> Highscore()
         {
             Dictionary<string, string> debug = new Dictionary<string, string>();
-            List<Game> games = this.db.Games.Where(x => x.status == GameStatus.finished).ToList();
+            List<Game> games = this.db.Games.Where(x => x.status == GameStatus.finished).Include(x => x.UserWinner).ToList();
             debug.Add("finnished_games_length", games.Count.ToString());
 
             Dictionary<User, int> scores = new Dictionary<User, int>();
