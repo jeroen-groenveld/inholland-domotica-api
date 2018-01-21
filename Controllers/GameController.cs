@@ -570,7 +570,7 @@ namespace Domotica_API.Controllers
                     scores[game.UserWinner]++;
                 }
             }
-            var sorted = scores.OrderBy(x => x.Value).Take(3);
+            var sorted = scores.OrderByDescending(x => x.Value).Take(3);
 
             List<object> result = new List<object>();
             foreach (KeyValuePair<User, int> user in sorted)
