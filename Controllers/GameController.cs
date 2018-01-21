@@ -578,9 +578,6 @@ namespace Domotica_API.Controllers
                 result.Add(this.UserStats(user.Key));
             }
 
-            //Reverse the list, the user that has the most wins is now at index 0.
-            result.Reverse();
-
             return result;
         }
 
