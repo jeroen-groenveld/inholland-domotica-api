@@ -556,9 +556,7 @@ namespace Domotica_API.Controllers
         #region "Read functions"
         private List<object> Highscore()
         {
-            Dictionary<string, string> debug = new Dictionary<string, string>();
             List<Game> games = this.db.Games.Where(x => x.status == GameStatus.finished).Include(x => x.UserWinner).ToList();
-            debug.Add("finnished_games_length", games.Count.ToString());
 
             Dictionary<User, int> scores = new Dictionary<User, int>();
             foreach (Game game in games)
@@ -568,23 +566,22 @@ namespace Domotica_API.Controllers
                     if (scores.ContainsKey(game.UserWinner) == false)
                     {
                         scores[game.UserWinner] = 0;
-                        debug.Add("user_score_" + game.UserWinner.name, "0");
                     }
                     scores[game.UserWinner]++;
                 }
             }
-            debug.Add("scores_length", scores.Count.ToString());
             var sorted = scores.OrderBy(x => x.Value).Take(3);
-            debug.Add("sorted_length", sorted.Count().ToString());
 
             List<object> result = new List<object>();
             foreach (KeyValuePair<User, int> user in sorted)
             {
                 result.Add(this.UserStats(user.Key));
             }
-            debug.Add("results_length", result.Count.ToString());
 
-            return new List<object>() { new { debug = debug }, new { result = result }};
+            //Reverse the list, the user that has the most wins is now at index 0.
+            result.Reverse();
+
+            return result;
         }
 
         private List<GameData> UserInvites()
