@@ -460,7 +460,7 @@ namespace Domotica_API.Controllers
             }
 
             //check if the game has finished
-            if (game.status == GameStatus.finished)
+            if (game.status == GameStatus.finished || game.status == GameStatus.canceled)
             {
                 return new Result { ResultFunc = this.BadRequest, Data = "This game has finished." };
             }
@@ -618,7 +618,7 @@ namespace Domotica_API.Controllers
 
         private object UserStats(User user)
         {
-            int loses = this.db.Games.Count(x => (x.User1 == user || x.User2 == user) && x.UserWinner == x.User2 && x.status == GameStatus.finished);
+            int loses = this.db.Games.Count(x => (x.User1 == user || x.User2 == user) && x.UserWinner != user && x.UserWinner != null && x.status == GameStatus.finished);
             int wins = this.db.Games.Count(x => x.UserWinner == user && x.status == GameStatus.finished);
             int ties = this.db.Games.Count(x => (x.User1 == user || x.User2 == user) && x.UserWinner == null && x.status == GameStatus.finished);
             int total_games_played = this.db.Games.Count(x => (x.User1 == user || x.User2 == user) && x.status == GameStatus.finished);
